@@ -1,0 +1,89 @@
+import { Project } from '@/store/musicStore';
+
+export const PROJECTS: Project[] = [
+    {
+        id: 0,
+        title: 'The Nexus Protocol',
+        subtitle: 'Full-Stack Web Platform',
+        year: '2024',
+        description:
+            'A real-time collaborative workspace platform with live document editing, presence indicators, and end-to-end encryption.',
+        longDescription:
+            'The Nexus Protocol is a high-performance collaborative platform built for distributed teams. It features operational transform-based conflict resolution, a custom rich-text editor, WebSocket presence layer, and AES-256 encryption at rest. Handles 10k+ concurrent users with sub-50ms latency.',
+        techStack: ['Next.js', 'TypeScript', 'Socket.io', 'PostgreSQL', 'Redis', 'AWS'],
+        color: '#FBBF24',
+        accentGlow: 'rgba(0, 242, 254, 0.6)',
+        githubUrl: '#',
+        liveUrl: '#',
+        vinylLabel: 'NXP',
+        vinylEmoji: '🌐',
+    },
+    {
+        id: 1,
+        title: 'Synthwave FM',
+        subtitle: 'Music Discovery App',
+        year: '2024',
+        description:
+            'An AI-powered music recommendation engine that curates personalized synthwave and lo-fi playlists based on mood detection.',
+        longDescription:
+            'Synthwave FM combines machine learning with a sleek audio player to create a deeply personal music discovery experience. Features mood detection via facial expression API, a custom audio visualizer, BPM sync animations, and Deezer/Spotify integration with a proprietary recommendation graph.',
+        techStack: ['React', 'Python', 'FastAPI', 'TensorFlow', 'Web Audio API', 'Deezer API'],
+        color: '#D97706',
+        accentGlow: 'rgba(255, 0, 191, 0.6)',
+        githubUrl: '#',
+        liveUrl: '#',
+        vinylLabel: 'SWF',
+        vinylEmoji: '🎵',
+    },
+    {
+        id: 2,
+        title: 'Orbit Dashboard',
+        subtitle: 'Analytics Platform',
+        year: '2023',
+        description:
+            'A mission-critical analytics dashboard for satellite telemetry data, featuring real-time 3D orbit visualization and anomaly detection.',
+        longDescription:
+            'Orbit Dashboard processes telemetry streams from low-Earth orbit satellites, rendering real-time 3D orbital paths using Three.js. Features ML-based anomaly detection with automated alerting, historical data replay, custom SQL query builder, and a drag-and-drop widget system for mission control rooms.',
+        techStack: ['React', 'Three.js', 'Python', 'Kafka', 'ClickHouse', 'Grafana'],
+        color: '#CBB368',
+        accentGlow: 'rgba(203, 179, 104, 0.6)',
+        githubUrl: '#',
+        liveUrl: '#',
+        vinylLabel: 'ORB',
+        vinylEmoji: '🛸',
+    },
+    {
+        id: 3,
+        title: 'Ghost Market',
+        subtitle: 'NFT Marketplace',
+        year: '2023',
+        description:
+            'A decentralized NFT marketplace with gasless minting, cross-chain support, and a built-in generative art studio.',
+        longDescription:
+            'Ghost Market is a next-gen NFT platform built on the Polygon and Solana ecosystems. Features gasless meta-transactions, lazy minting, a browser-based generative art studio, royalty enforcement via on-chain splits, and a social layer with collector profiles and curated drops.',
+        techStack: ['Next.js', 'Solidity', 'Ethers.js', 'IPFS', 'Polygon', 'The Graph'],
+        color: '#99FFE6',
+        accentGlow: 'rgba(153, 255, 230, 0.6)',
+        githubUrl: '#',
+        liveUrl: '#',
+        vinylLabel: 'GHM',
+        vinylEmoji: '👻',
+    },
+    {
+        id: 4,
+        title: 'Neural Canvas',
+        subtitle: 'AI Creative Tool',
+        year: '2024',
+        description:
+            'A browser-based AI art studio that lets users generate, composite, and animate pixel art using fine-tuned diffusion models.',
+        longDescription:
+            'Neural Canvas democratizes pixel art creation through AI. Built with a custom LoRA-fine-tuned Stable Diffusion model specifically trained on retro and pixel art styles. Features real-time inpainting, sprite sheet generation, palette extraction, and direct export to game engines like Godot and Unity.',
+        techStack: ['React', 'Python', 'Stable Diffusion', 'WebGL', 'FastAPI', 'Hugging Face'],
+        color: '#B48EFF',
+        accentGlow: 'rgba(180, 142, 255, 0.6)',
+        githubUrl: '#',
+        liveUrl: '#',
+        vinylLabel: 'NRC',
+        vinylEmoji: '🎨',
+    },
+];

@@ -1,26 +1,269 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-deep: #0d0a14;
+  --bg-indigo: #1B1229;
+  --bg-mauve: #302C44;
+  --bg-magenta: #634B7D;
+  --accent-cyan: #FBBF24;
+  --accent-pink: #D97706;
+  --accent-gold: #CBB368;
+  --accent-teal: #99FFE6;
+  --accent-purple: #B48EFF;
+  --text-parchment: #F4F1EA;
+  --text-dim: #9b93ae;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
+  overflow: hidden;
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-deep);
+  color: var(--text-parchment);
+  font-family: 'Space Grotesk', sans-serif;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Pixel art rendering */
+.pixel-art {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-mauve);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-magenta);
+  border-radius: 2px;
+}
+
+/* The record library's track stays present but quiet until it is needed. */
+.library-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 147, 174, 0.42) transparent;
+}
+
+.library-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.library-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.library-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(155, 147, 174, 0.32);
+  border-radius: 999px;
+}
+
+.library-scrollbar:hover::-webkit-scrollbar-thumb,
+.library-scrollbar:focus::-webkit-scrollbar-thumb {
+  background: rgba(155, 147, 174, 0.7);
+}
+
+/* Glow utilities */
+.glow-cyan {
+  filter: drop-shadow(0 0 10px #FBBF24) drop-shadow(0 0 20px #FBBF24aa);
+}
+
+.glow-pink {
+  filter: drop-shadow(0 0 10px #D97706) drop-shadow(0 0 20px #D97706aa);
+}
+
+.glow-gold {
+  filter: drop-shadow(0 0 8px #CBB368) drop-shadow(0 0 16px #CBB368aa);
+}
+
+/* Scanline overlay */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.08) 2px,
+      rgba(0, 0, 0, 0.08) 4px);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Vinyl spin animation */
+@keyframes vinylSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vinyl-spinning {
+  animation: vinylSpin 3s linear infinite;
+}
+
+/* Needle drop */
+@keyframes needleDrop {
+  0% {
+    transform: rotate(-20deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.needle-playing {
+  animation: needleDrop 0.4s ease-out forwards;
+}
+
+/* Ambient float */
+@keyframes floatY {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.float {
+  animation: floatY 3s ease-in-out infinite;
+}
+
+/* Flickering light */
+@keyframes flicker {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  92% {
+    opacity: 1;
+  }
+
+  93% {
+    opacity: 0.6;
+  }
+
+  94% {
+    opacity: 1;
+  }
+
+  96% {
+    opacity: 0.8;
+  }
+
+  97% {
+    opacity: 1;
+  }
+}
+
+.flicker {
+  animation: flicker 4s ease-in-out infinite;
+}
+
+/* Gradient background animation */
+@keyframes bgShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Pulse glow */
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px 2px currentColor;
+  }
+
+  50% {
+    box-shadow: 0 0 20px 4px currentColor;
+  }
+}
+
+/* Star twinkle */
+@keyframes twinkle {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+/* Pixel font utility */
+.font-pixel {
+  font-family: 'Press Start 2P', cursive;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Glassmorphism card */
+.glass {
+  background: rgba(27, 18, 41, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 75, 125, 0.3);
+}
+
+/* CRT screen effect */
+.crt {
+  position: relative;
+  overflow: hidden;
+}
+
+.crt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.5) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+@keyframes waveBar {
+  from { transform: scaleY(0.4); }
+  to { transform: scaleY(1); }
 }

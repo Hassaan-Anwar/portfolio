@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+import { type ReactNode, useEffect, useRef, useState, useCallback } from 'react';
 import NowPlayingPanel from './NowPlayingPanel';
 import VinylRecord from './VinylRecord';
 import { useMusicStore } from '@/store/musicStore';
@@ -9,7 +9,7 @@ import { PROJECTS } from '@/data/projects';
 import { EXPERIENCES } from '@/data/experience';
 import Crate from './Crate';
 import CosmicRainCanvas from './CosmicRainCanvas';
-
+import { Disc3, ChevronLeft } from 'lucide-react';
 
 /* ─── Floating space cat (pixel art SVG) ─── */
 function SpaceCat({
@@ -78,21 +78,26 @@ function Star({ x, y, delay }: { x: number; y: number; delay: number }) {
     );
 }
 
-/**
- * Keeps the library scrollable without making it an overflow container. That
- * distinction matters here: records must still be able to travel out of the
- * library and over the player while they are being dragged.
- */
-function LibraryPane({ children }: { children: ReactNode }) {
+/* ═══════════════════════════════════════════════════════════
+   PEEK DRAWER — The library sidebar that peeks from left edge
+   Shows a thin 40px strip; expands to 280px on hover/proximity
+   ═══════════════════════════════════════════════════════════ */
+const DRAWER_COLLAPSED = 40;
+const DRAWER_EXPANDED = 280;
+
+function PeekDrawer({ children, accentColor }: { children: ReactNode; accentColor: string }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const drawerRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const [contentHeight, setContentHeight] = useState(1);
-    const [scrollTop, setScrollTop] = useState(0);
+    const rawScrollY = useMotionValue(0);
+    const smoothY = useSpring(rawScrollY, { stiffness: 400, damping: 45, mass: 0.8 });
 
+    // Track content height for virtual scroll
     useEffect(() => {
         const content = contentRef.current;
         if (!content) return;
-
         const updateHeight = () => setContentHeight(Math.max(1, content.offsetHeight));
         updateHeight();
         const observer = new ResizeObserver(updateHeight);
@@ -100,48 +105,189 @@ function LibraryPane({ children }: { children: ReactNode }) {
         return () => observer.disconnect();
     }, []);
 
-    const syncScroll = () => setScrollTop(scrollRef.current?.scrollTop ?? 0);
+    const syncScroll = () => {
+        if (scrollRef.current) {
+            rawScrollY.set(-scrollRef.current.scrollTop);
+        }
+    };
+
+
+
+    const isDragging = useMusicStore((state) => state.isDragging);
+    const [isHoverZone, setIsHoverZone] = useState(false);
+
+    // Automatically manage drawer open/close based on hover and drag states
+    useEffect(() => {
+        let timer: ReturnType<typeof setTimeout>;
+        if (isDragging) {
+            setIsOpen(true);
+        } else if (isHoverZone) {
+            setIsOpen(true);
+        } else {
+            // Close with grace period
+            timer = setTimeout(() => setIsOpen(false), 300);
+        }
+        return () => clearTimeout(timer);
+    }, [isHoverZone, isDragging]);
+
+
+
+
+
 
     return (
-        <div
-            onWheel={(event) => {
-                const scrollbar = scrollRef.current;
-                if (!scrollbar) return;
-                event.preventDefault();
-                scrollbar.scrollTop += event.deltaY;
-            }}
-            style={{
-                position: 'relative',
-                zIndex: 50,
-                minWidth: 0,
-                minHeight: 0,
-                height: '100%',
-                borderRight: '1px solid rgba(255,255,255,0.05)',
-                // Clip vertically, but deliberately leave room to the right for a dragged record.
-                clipPath: 'inset(0 -100vw 0 0)',
-            }}
-        >
+        <>
+            {/* Invisible proximity detection zone — extends 30px past the visible drawer edge */}
             <div
-                ref={contentRef}
+                onMouseEnter={() => setIsHoverZone(true)}
                 style={{
-                    transform: `translateY(-${scrollTop}px)`,
-                    willChange: 'transform',
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: DRAWER_COLLAPSED + 30,
+                    zIndex: 100,
+                    pointerEvents: isOpen ? 'none' : 'auto',
+                }}
+            />
+
+            {/* The actual drawer */}
+            <motion.div
+                ref={drawerRef}
+                onMouseEnter={() => setIsHoverZone(true)}
+                onMouseLeave={() => setIsHoverZone(false)}
+                initial={{ width: DRAWER_COLLAPSED }}
+                animate={{ width: isOpen ? DRAWER_EXPANDED : DRAWER_COLLAPSED }}
+                transition={{ type: 'spring', stiffness: 450, damping: 22, mass: 1.1 }}
+                style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    zIndex: 90,
+                    // overflow: 'hidden' removed so dragging records can escape
+                    display: 'flex',
+                    flexDirection: 'row',
                 }}
             >
-                {children}
-            </div>
+                {/* Frosted glass backdrop */}
+                <div
+                    className="backdrop-blur-xl"
+                    style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: 'rgba(5, 3, 10, 0.75)',
+                        borderRight: `1px solid rgba(255,255,255,0.08)`,
+                    }}
+                />
 
-            <div
-                ref={scrollRef}
-                aria-label="Scroll record library"
-                className="library-scrollbar"
-                onScroll={syncScroll}
-                tabIndex={0}
-                style={{ position: 'absolute', inset: '0 2px 0 auto', width: '8px', overflowY: 'scroll', overflowX: 'hidden' }}
-            >
-                <div style={{ height: contentHeight, width: '1px' }} />
-            </div>
-        </div>
+                {/* ─ PEEK TAB (always visible) ─ */}
+                <motion.div
+                    animate={{ opacity: isOpen ? 0 : 1 }}
+                    transition={{ duration: 0.22, ease: 'easeInOut' }}
+                    style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: DRAWER_COLLAPSED,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '16px',
+                        zIndex: 5,
+                        pointerEvents: isOpen ? 'none' : 'auto',
+                        cursor: 'pointer',
+                    }}
+                    onClick={() => setIsOpen(true)}
+                >
+                    {/* Rotating disc icon */}
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                    >
+                        <Disc3 size={20} color={accentColor} style={{ opacity: 0.7 }} />
+                    </motion.div>
+
+                    {/* Vertical text */}
+                    <span
+                        className="font-pixel"
+                        style={{
+                            fontSize: '7px',
+                            color: '#9b93ae',
+                            letterSpacing: '3px',
+                            writingMode: 'vertical-rl',
+                            textOrientation: 'mixed',
+                        }}
+                    >
+                        CRATES
+                    </span>
+
+                    {/* Chevron indicator */}
+                    <motion.div
+                        animate={{ x: [0, 4, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                        <ChevronLeft size={14} color="#9b93ae" style={{ opacity: 0.5, transform: 'rotate(180deg)' }} />
+                    </motion.div>
+
+                    {/* Glowing edge line */}
+                    <div
+                        style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: '15%',
+                            bottom: '15%',
+                            width: '2px',
+                            background: `linear-gradient(to bottom, transparent, ${accentColor}60, transparent)`,
+                            borderRadius: '1px',
+                        }}
+                    />
+                </motion.div>
+
+                {/* ─ EXPANDED CONTENT (scrollable crates) ─ */}
+                <motion.div
+                    animate={{ opacity: isOpen ? 1 : 0, x: isOpen ? 0 : -12 }}
+                    transition={{ duration: 0.3, delay: isOpen ? 0.12 : 0, ease: 'easeInOut' }}
+                    onWheel={(event) => {
+                        const scrollbar = scrollRef.current;
+                        if (!scrollbar) return;
+                        event.preventDefault();
+                        scrollbar.scrollTop += event.deltaY;
+                    }}
+                    style={{
+                        position: 'relative',
+                        width: DRAWER_EXPANDED,
+                        height: '100%',
+                        zIndex: 2,
+                        // Clip vertically but allow dragged records to escape to the right
+                        clipPath: 'inset(0 -100vw 0 0)',
+                    }}
+                >
+                    <motion.div
+                        ref={contentRef}
+                        style={{
+                            y: smoothY,
+                            willChange: 'transform',
+                        }}
+                    >
+                        {children}
+                    </motion.div>
+
+                    <div
+                        ref={scrollRef}
+                        aria-label="Scroll record library"
+                        className="library-scrollbar"
+                        onScroll={syncScroll}
+                        tabIndex={0}
+                        style={{ position: 'absolute', inset: '0 2px 0 auto', width: '8px', overflowY: 'scroll', overflowX: 'hidden' }}
+                    >
+                        <div style={{ height: contentHeight, width: '1px' }} />
+                    </div>
+                </motion.div>
+            </motion.div>
+        </>
     );
 }
 
@@ -192,9 +338,9 @@ export default function PixelRoom() {
                 position: 'relative',
             }}
         >
-                <CosmicRainCanvas />
+            <CosmicRainCanvas />
 
-            
+
             {/* ══ TOP HEADER ══ */}
             <header
                 className="bg-black/30 backdrop-blur-md border-b border-white/10"
@@ -210,7 +356,6 @@ export default function PixelRoom() {
                     flexShrink: 0
                 }}
             >
-                
 
                 {/* Left: Now Playing Status */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -228,7 +373,7 @@ export default function PixelRoom() {
                             {isPlaying ? 'NOW PLAYING' : 'PAUSED'}
                         </span>
                         <span className="font-pixel" style={{ fontSize: '6px', color: activeColor, opacity: 0.8 }}>
-                            {isProject ? 'PROJECT' : 'EXPERIENCE'}
+                            {activeSection === 'projects' ? 'PROJECT' : activeSection === 'experience' ? 'EXPERIENCE' : activeSection === 'about' ? 'ABOUT ME' : 'FEATURED'}
                         </span>
                     </div>
                 </div>
@@ -252,12 +397,12 @@ export default function PixelRoom() {
                 </div>
             </header>
 
-            {/* ══ MAIN SPLIT VIEW ══ */}
-            <div style={{ display: 'grid', gridTemplateColumns: '260px minmax(0, 1fr)', flex: 1, minHeight: 0, position: 'relative', zIndex: 1 }}>
+            {/* ══ MAIN CONTENT AREA ══ */}
+            <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
 
-                {/* LEFT: Record Crates (Library Sidebar) */}
-                <LibraryPane>
-                    <div style={{ padding: '40px 48px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                {/* PEEK DRAWER — slides in from the left */}
+                <PeekDrawer accentColor={activeColor}>
+                    <div style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
 
                         {/* ABOUT CRATE */}
                         <Crate
@@ -276,9 +421,9 @@ export default function PixelRoom() {
                             ]}
                         />
 
-                        {/* BEST SELLERS CRATE */}
+                        {/* FEATURED PROJECTS CRATE */}
                         <Crate
-                            title="BEST SELLERS"
+                            title="FEATURED PROJECTS"
                             items={[0, 1, 2].map((i) => ({
                                 id: `bs-${i}`,
                                 onPlay: () => useMusicStore.getState().setCurrentBestsellers(i),
@@ -328,13 +473,13 @@ export default function PixelRoom() {
                             })}
                         />
 
-                        {/* Breathing room completely clearing the footer */}
+                        {/* Breathing room */}
                         <div style={{ height: 120 }} />
                     </div>
-                </LibraryPane>
+                </PeekDrawer>
 
-                {/* RIGHT: Main Player Dashboard */}
-                <div style={{ minWidth: 0, height: '100%', overflow: 'hidden' }}>
+                {/* RIGHT: Main Player Dashboard — takes full width, drawer overlays */}
+                <div style={{ position: 'absolute', left: 40, right: 0, top: 0, bottom: 0, overflow: 'hidden' }}>
                     <NowPlayingPanel />
                 </div>
             </div>

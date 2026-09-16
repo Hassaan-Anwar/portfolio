@@ -38,7 +38,7 @@ export default function Crate({ title, items: initialItems }: CrateProps) {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
 
             {/* Elegant Header */}
             <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
@@ -47,88 +47,155 @@ export default function Crate({ title, items: initialItems }: CrateProps) {
                 </span>
             </div>
 
-            {/* The 3D Crate Viewport */}
+
+            {/* The 3D Crate Viewport (Acrylic Bin Container) */}
             <div
                 style={{
                     position: 'relative',
-                    width: '160px',
-                    height: '180px',
-                    perspective: '1000px',
-                    marginTop: '20px',
+                    width: '180px',
+                    height: '175px',
+                    perspective: '1200px',
+                    marginTop: '0px',
                     display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'center'
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingBottom: '40px' // Lift records up a bit inside the bin
                 }}
             >
-                <AnimatePresence mode="popLayout" initial={false}>
-                    {items.map((item, index) => {
-                        const isSlidingOut = item.id === slidingOutId;
-                        const isDragging = item.id === draggingId;
+                {/* 1. Crate Back Wall */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: '10px',
+                    width: '180px',
+                    height: '140px',
+                    background: 'linear-gradient(to bottom, transparent, rgba(5,3,10,0.8))',
+                    borderLeft: '1px solid rgba(255,255,255,0.05)',
+                    borderRight: '1px solid rgba(255,255,255,0.05)',
+                    borderRadius: '16px 16px 0 0',
+                    zIndex: 0
+                }} />
 
-                        const visualIndex = isSlidingOut ? 0 : index;
+                {/* 2. Crate Inner Shadow/Glow (Amber) */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: '10px',
+                    width: '170px',
+                    height: '20px',
+                    background: 'rgba(160, 180, 255, 0.15)',
+                    filter: 'blur(20px)',
+                    zIndex: 1
+                }} />
 
-                        const scale = Math.max(1 - visualIndex * 0.06, 0.5);
-                        const translateY = -visualIndex * 15;
-                        const opacity = visualIndex > 4 ? 0 : 1 - (visualIndex * 0.15);
+                {/* 3. The actual records */}
+                <div style={{ position: 'absolute', bottom: '15px', left: '10px', width: '160px', height: '160px', zIndex: 10 }}>
+                    <AnimatePresence mode="popLayout" initial={false}>
+                        {items.map((item, index) => {
 
-                        // Target scale: when dragging, grow the record to ~240px (NowPlayingPanel disc size).
-                        // The VinylRecord disc is 92px inside a 96px sleeve, so scale factor ≈ 240/96 = 2.5
-                        const DRAG_SCALE = 2.5;
+                            const isSlidingOut = item.id === slidingOutId;
+                            const isDragging = item.id === draggingId;
 
-                        return (
-                            <motion.div
-                                key={item.id}
-                                initial={false}
-                                drag={visualIndex === 0 ? true : false}
-                                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                                dragElastic={1}
-                                whileDrag={{ scale: DRAG_SCALE, zIndex: 9999 }}
-                                onDragStart={() => {
-                                    setDraggingId(item.id);
-                                    useMusicStore.getState().setDragging(true);
-                                }}
-                                onDragEnd={(e, info) => {
-                                    setDraggingId(null);
-                                    useMusicStore.getState().setDragging(false);
+                            const visualIndex = isSlidingOut ? 0 : index;
 
-                                    if (info.offset.x < -100) {
-                                        handleNext();
-                                    } else if (info.offset.x > 200) {
-                                        if (item.onPlay) item.onPlay();
-                                        handleNext();
-                                    }
-                                }}
-                                animate={{
-                                    x: isSlidingOut ? -200 : 0,
-                                    y: isSlidingOut ? -40 : translateY,
-                                    // Grow to full disc size while dragging; regular depth scale otherwise
-                                    scale: isSlidingOut ? 0.9 : scale,
-                                    opacity: isSlidingOut ? 0 : opacity,
-                                    rotateZ: isSlidingOut ? -15 : 0,
-                                    // REMOVED rotateX — it caused hardware-accelerated blur on the disc CSS gradients
-                                    zIndex: isSlidingOut ? 50 : 20 - visualIndex,
-                                }}
-                                transition={{
-                                    type: 'spring',
-                                    stiffness: 300,
-                                    damping: 24,
-                                    mass: 0.8
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    transformOrigin: 'center center',
-                                    cursor: visualIndex === 0 ? 'grab' : 'default',
-                                    pointerEvents: visualIndex === 0 ? 'auto' : 'none',
-                                }}
-                                whileTap={visualIndex === 0 ? { cursor: 'grabbing' } : {}}
-                            >
-                                {/* No inner box shadow wrapper — sleeve and disc handle their own shadows */}
-                                {item.content}
-                            </motion.div>
-                        );
-                    })}
-                </AnimatePresence>
+                            const scale = Math.max(1 - visualIndex * 0.06, 0.5);
+                            const translateY = -visualIndex * 15;
+                            const opacity = visualIndex > 4 ? 0 : 1 - (visualIndex * 0.15);
+
+                            // Target scale: when dragging, grow the record to ~240px (NowPlayingPanel disc size).
+                            // The VinylRecord disc is 92px inside a 96px sleeve, so scale factor ≈ 240/96 = 2.5
+                            const DRAG_SCALE = 2.5;
+
+                            return (
+                                <motion.div
+                                    key={item.id}
+
+                                    initial={false}
+                                    drag={visualIndex === 0 ? true : false}
+                                    dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                                    dragElastic={0.8}
+                                    dragSnapToOrigin
+                                    whileDrag={{ scale: DRAG_SCALE, zIndex: 9999 }}
+                                    onDragStart={() => {
+                                        setDraggingId(item.id);
+                                        useMusicStore.getState().setDragging(true);
+                                    }}
+                                    onDragEnd={(e, info) => {
+                                        setDraggingId(null);
+                                        useMusicStore.getState().setDragging(false);
+
+                                        if (info.offset.x < -100) {
+                                            handleNext();
+                                        } else if (info.offset.x > 200) {
+                                            if (item.onPlay) item.onPlay();
+                                            handleNext();
+                                        }
+                                    }}
+                                    animate={{
+                                        x: isSlidingOut ? -200 : 0,
+                                        y: isSlidingOut ? -40 : translateY,
+                                        scale: isSlidingOut ? 0.9 : scale,
+                                        opacity: isSlidingOut ? 0 : opacity,
+                                        rotateZ: isSlidingOut ? -15 : 0,
+                                        zIndex: isSlidingOut ? 50 : 20 - visualIndex,
+                                    }}
+                                    transition={{
+                                        type: 'spring',
+                                        stiffness: 220,
+                                        damping: 28,
+                                        mass: 1.0
+                                    }}
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0, left: 0, width: '100%', height: '100%',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        transformOrigin: 'center center',
+                                        cursor: visualIndex === 0 ? 'grab' : 'default',
+                                        pointerEvents: visualIndex === 0 ? 'auto' : 'none',
+                                    }}
+                                    whileTap={visualIndex === 0 ? { cursor: 'grabbing' } : {}}
+                                >
+                                    {/* No inner box shadow wrapper — sleeve and disc handle their own shadows */}
+                                    {item.content}
+                                </motion.div>
+                            );
+                        })}
+                    </AnimatePresence>
+                </div>
+
+                {/* 4. Acrylic Front Glass Panel */}
+                <div
+                    className="backdrop-blur-md"
+                    style={{
+                        position: 'absolute',
+                        bottom: '0',
+                        width: '180px',
+                        height: '70px',
+                        background: 'linear-gradient(135deg, rgba(160, 165, 175, 0.2) 0%, rgba(80, 85, 95, 0.45) 50%, rgba(10, 15, 20, 0.7) 100%)',
+                        border: '1px solid rgba(200, 205, 215, 0.3)',
+                        borderTop: '2px solid rgba(220, 225, 235, 0.5)',
+                        borderBottom: '4px solid rgba(160, 165, 175, 0.4)',
+                        borderRadius: '0 0 16px 16px',
+                        boxShadow: '0 -10px 40px rgba(0,0,0,0.8), inset 0 2px 10px rgba(255,255,255,0.2), inset 0 -4px 10px rgba(0,0,0,0.6)',
+                        zIndex: 60, // Above resting records
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    {/* Glass glare effect */}
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '30%', background: 'linear-gradient(180deg, rgba(255,255,255,0.1), transparent)', borderRadius: '0 0 16px 16px' }} />
+
+                    {/* Handle/Label plate */}
+                    <div style={{
+                        width: '40px',
+                        height: '6px',
+                        background: 'linear-gradient(to bottom, #9ca3af, #4b5563)',
+                        border: '1px solid rgba(0,0,0,0.8)',
+                        borderRadius: '4px',
+                        boxShadow: 'inset 0 1px 4px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.5)'
+                    }} />
+                </div>
             </div>
+
         </div>
     );
 }

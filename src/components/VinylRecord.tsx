@@ -41,7 +41,7 @@ export default function VinylRecord({
     const HOVER_SLIDE = 16;
 
     // Calculate dynamic state
-    const currentSlide = (isHovered || isActive) && !isPressed ? HOVER_SLIDE : 0;
+    const currentSlide = isHovered && !isPressed ? HOVER_SLIDE : 0;
 
     return (
         <motion.div
@@ -50,7 +50,7 @@ export default function VinylRecord({
             onTapStart={() => setIsPressed(true)}
             onTap={() => setIsPressed(false)}
             onTapCancel={() => setIsPressed(false)}
-            className="relative focus:outline-none flex flex-col items-start"
+            className="relative focus:outline-none flex flex-col items-start select-none"
             initial={{ width: SLEEVE }}
             animate={{
                 width: SLEEVE + currentSlide,
@@ -61,7 +61,11 @@ export default function VinylRecord({
             aria-label={`Select: ${title}`}
             style={{
                 height: SLEEVE,
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                
             }}
+            draggable={false}
         >
             {/* ── VINYL DISC (Layer 1 - Bottom) ── */}
             <motion.div
@@ -152,12 +156,12 @@ export default function VinylRecord({
                 }}
             >
                 {/* Big emoji on sleeve */}
-                <span style={{ fontSize: 32, opacity: isActive ? 1 : 0.85, transition: 'opacity 0.3s' }}>{emoji}</span>
+                <span style={{ fontSize: 32, opacity: isActive ? 1 : 0.85, transition: 'opacity 0.3s', pointerEvents: 'none', userSelect: 'none' }}>{emoji}</span>
 
                 {/* Subtle label text */}
                 <div
                     className="absolute bottom-1.5 left-0 right-0 text-center font-pixel"
-                    style={{ fontSize: '4px', color: color, letterSpacing: 1, opacity: 0.9 }}
+                    style={{ fontSize: '4px', color: color, letterSpacing: 1, opacity: 0.9, pointerEvents: 'none', userSelect: 'none' }}
                 >
                     {label}
                 </div>

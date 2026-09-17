@@ -68,7 +68,7 @@ export default function VinylSprite({ index }: VinylProps) {
                         style={{
                             width: 22,
                             height: 22,
-                            background: isActive ? project.color : '#222',
+                            background: project.color,
                             boxShadow: isActive ? `0 0 6px ${project.color}` : 'none',
                         }}
                     >

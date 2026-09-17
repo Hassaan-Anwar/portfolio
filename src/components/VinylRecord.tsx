@@ -111,7 +111,7 @@ export default function VinylRecord({
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        background: isActive ? color : '#1e1e1e',
+                        background: color,
                         boxShadow: isActive ? `0 0 12px ${accentGlow}` : 'none',
                         transition: 'background 0.4s, box-shadow 0.4s',
                         zIndex: 2

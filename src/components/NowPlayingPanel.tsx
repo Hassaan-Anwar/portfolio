@@ -167,10 +167,8 @@ export default function NowPlayingPanel() {
                                         boxShadow: `0 0 20px ${accentGlow}`, zIndex: 2,
                                     }}
                                 >
-                                    <span style={{ fontSize: '32px', zIndex: 2 }}>{item.shortTitle}</span>
-                                    <span className="font-pixel" style={{ fontSize: '5px', color: '#0d0a14', letterSpacing: '1px', zIndex: 2 }}>
-                                        {item.vinylLabel}
-                                    </span>
+                                    
+                                    
                                 </div>
 
                                 {/* Spindle Hole */}

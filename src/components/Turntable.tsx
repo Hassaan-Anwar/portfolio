@@ -78,12 +78,7 @@ export default function Turntable() {
                             }}
                         >
                             
-                            <span
-                                className="font-pixel"
-                                style={{ fontSize: 4, color: '#0d0a14', letterSpacing: 1 }}
-                            >
-                                {project.vinylLabel}
-                            </span>
+                            
                         </div>
                     </div>
                 </motion.div>

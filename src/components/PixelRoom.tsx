@@ -85,8 +85,7 @@ function Star({ x, y, delay }: { x: number; y: number; delay: number }) {
 const DRAWER_COLLAPSED = 40;
 const DRAWER_EXPANDED = 280;
 
-function PeekDrawer({ children, accentColor }: { children: ReactNode; accentColor: string }) {
-    const [isOpen, setIsOpen] = useState(false);
+function PeekDrawer({ children, accentColor, isOpen, setIsOpen }: { children: ReactNode; accentColor: string; isOpen: boolean; setIsOpen: (v: boolean) => void }) {
     const drawerRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -160,24 +159,22 @@ function PeekDrawer({ children, accentColor }: { children: ReactNode; accentColo
                 animate={{ width: isOpen ? DRAWER_EXPANDED : DRAWER_COLLAPSED }}
                 transition={{ type: 'spring', stiffness: 450, damping: 22, mass: 1.1 }}
                 style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
+                    flexShrink: 0,
+                    height: '100%',
                     zIndex: 90,
-                    // overflow: 'hidden' removed so dragging records can escape
                     display: 'flex',
                     flexDirection: 'row',
+                    position: 'relative',
+                    overflow: 'visible',
                 }}
             >
                 {/* Frosted glass backdrop */}
                 <div
-                    className="backdrop-blur-xl"
                     style={{
                         position: 'absolute',
                         inset: 0,
-                        background: 'rgba(5, 3, 10, 0.75)',
-                        borderRight: `1px solid rgba(255,255,255,0.08)`,
+                        background: 'rgba(5, 3, 10, 0.92)',
+                        borderRight: '1px solid rgba(255,255,255,0.08)',
                     }}
                 />
 
@@ -302,23 +299,13 @@ export default function PixelRoom() {
     let activeColor = '#302C44';
     let activeGlow = 'rgba(48,44,68,0.5)';
 
-    if (activeSection === 'projects') {
-        const item = PROJECTS[currentProjectIndex];
-        activeColor = item?.color || activeColor;
-        activeGlow = item?.accentGlow || activeGlow;
-    } else if (activeSection === 'experience') {
-        const item = EXPERIENCES[currentExperienceIndex];
-        activeColor = item?.color || activeColor;
-        activeGlow = item?.accentGlow || activeGlow;
-    } else if (activeSection === 'bestsellers') {
-        activeColor = "#FBBF24";
-        activeGlow = "rgba(251,191,36,0.6)";
-    } else if (activeSection === 'about') {
-        activeColor = "#D97706";
-        activeGlow = "rgba(217,119,6,0.6)";
-    }
+    if (activeSection === 'about') { activeColor = '#D97706'; activeGlow = 'rgba(217,119,6,0.6)'; }
+    else if (activeSection === 'bestsellers') { activeColor = '#FBBF24'; activeGlow = 'rgba(251,191,36,0.6)'; }
+    else if (activeSection === 'experience') { activeColor = '#2DD4BF'; activeGlow = 'rgba(45,212,191,0.6)'; }
+    else if (activeSection === 'projects') { activeColor = '#B48EFF'; activeGlow = 'rgba(180,142,255,0.6)'; }
 
     const isProject = activeSection === 'projects';
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const CATS = [
         { x: 12, y: 18, scale: 1, phase: 0, rotateDir: 1 },
@@ -398,10 +385,10 @@ export default function PixelRoom() {
             </header>
 
             {/* ══ MAIN CONTENT AREA ══ */}
-            <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'row', position: 'relative', overflow: 'hidden' }}>
 
                 {/* PEEK DRAWER — slides in from the left */}
-                <PeekDrawer accentColor={activeColor}>
+                <PeekDrawer accentColor={activeColor} isOpen={drawerOpen} setIsOpen={setDrawerOpen}>
                     <div style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
 
                         {/* ABOUT CRATE */}
@@ -447,7 +434,7 @@ export default function PixelRoom() {
                                     onPlay: () => useMusicStore.getState().setCurrentExperience(i),
                                     content: (
                                         <VinylRecord
-                                            color={exp.color} accentGlow={exp.accentGlow} emoji={exp.vinylEmoji} label={exp.vinylLabel} title={exp.company}
+                                            color="#2DD4BF" accentGlow="rgba(45,212,191,0.6)" emoji={exp.vinylEmoji} label={exp.vinylLabel} title={exp.company}
                                             isActive={isActive} isPlaying={isActive && isPlaying}
                                         />
                                     )
@@ -465,7 +452,7 @@ export default function PixelRoom() {
                                     onPlay: () => useMusicStore.getState().setCurrentProject(i),
                                     content: (
                                         <VinylRecord
-                                            color={proj.color} accentGlow={proj.accentGlow} emoji={proj.vinylEmoji} label={proj.vinylLabel} title={proj.title}
+                                            color="#B48EFF" accentGlow="rgba(180,142,255,0.6)" emoji={proj.vinylEmoji} label={proj.vinylLabel} title={proj.title}
                                             isActive={isActive} isPlaying={isActive && isPlaying}
                                         />
                                     )
@@ -479,7 +466,7 @@ export default function PixelRoom() {
                 </PeekDrawer>
 
                 {/* RIGHT: Main Player Dashboard — takes full width, drawer overlays */}
-                <div style={{ position: 'absolute', left: 40, right: 0, top: 0, bottom: 0, overflow: 'hidden' }}>
+                <div style={{ flex: 1, minWidth: 0, height: '100%', overflow: 'hidden' }}>
                     <NowPlayingPanel />
                 </div>
             </div>

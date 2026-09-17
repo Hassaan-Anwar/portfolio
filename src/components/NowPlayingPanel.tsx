@@ -30,8 +30,12 @@ export default function NowPlayingPanel() {
     else item = { title: `Top Hit ${currentBestsellersIndex + 1}`, subtitle: 'Featured Item', year: '2024', description: 'A highly rated project or item from the catalog.', skills: ['Design', 'Code'], color: '#FBBF24', accentGlow: 'rgba(251,191,36,0.6)', vinylEmoji: '🔥', vinylLabel: `BS${currentBestsellersIndex}` };
 
     const isProject = activeSection === 'projects';
-    const color = item.color;
-    const accentGlow = item.accentGlow;
+    let color = '#302C44';
+    let accentGlow = 'rgba(48,44,68,0.5)';
+    if (activeSection === 'about') { color = '#D97706'; accentGlow = 'rgba(217,119,6,0.6)'; }
+    else if (activeSection === 'bestsellers') { color = '#FBBF24'; accentGlow = 'rgba(251,191,36,0.6)'; }
+    else if (activeSection === 'experience') { color = '#2DD4BF'; accentGlow = 'rgba(45,212,191,0.6)'; }
+    else if (activeSection === 'projects') { color = '#B48EFF'; accentGlow = 'rgba(180,142,255,0.6)'; }
     const DISC = 240; // Increased size since it's the main focus now!
 
     const title = 'title' in item ? item.title : item.company;
@@ -252,24 +256,25 @@ export default function NowPlayingPanel() {
                             bottom: 0,
                             left: 0,
                             right: 0,
-                            padding: '10px 20px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '8px',
+                            height: '64px',
+                            padding: '0 24px',
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto 1fr',
+                            alignItems: 'center',
                             zIndex: 10,
                         }}
                     >
-                        {/* Track info */}
+                        {/* 1. Track info (Left) */}
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={title}
-                                initial={{ opacity: 0, y: 4 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -4 }}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 10 }}
                                 transition={{ duration: 0.2 }}
-                                style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}
+                                style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}
                             >
-                                <div style={{ width: '28px', height: '28px', borderRadius: '6px', flexShrink: 0, background: `linear-gradient(135deg, ${color}66, #1B1229)`, border: `1px solid ${color}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
+                                <div style={{ width: '36px', height: '36px', borderRadius: '6px', flexShrink: 0, background: `linear-gradient(135deg, ${color}66, #1B1229)`, border: `1px solid ${color}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
                                     {item.vinylEmoji}
                                 </div>
                                 <div style={{ minWidth: 0 }}>
@@ -278,18 +283,23 @@ export default function NowPlayingPanel() {
                                 </div>
                             </motion.div>
                         </AnimatePresence>
-                        {/* Controls */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <button onClick={prev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipBack size={15} /></button>
-                                <button onClick={togglePlay} style={{ background: color, border: 'none', cursor: 'pointer', color: '#0d0a14', width: '34px', height: '34px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 14px ${accentGlow}`, flexShrink: 0, transition: 'transform 0.15s' }} onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.1)')} onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}>{isPlaying ? <Pause size={15} fill="currentColor" /> : <Play size={15} fill="currentColor" />}</button>
-                                <button onClick={next} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipForward size={15} /></button>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', height: '28px', flex: 1, justifyContent: 'flex-end' }}>
-                                {Array.from({ length: 18 }).map((_, i) => (
-                                    <div key={i} style={{ width: '3px', background: `linear-gradient(to top, ${color}55, ${color})`, borderRadius: '2px', height: isPlaying ? `${6 + (i % 7) * 3}px` : '3px', transition: 'height 0.4s ease', animation: isPlaying ? `waveBar ${0.55 + (i % 5) * 0.15}s ease-in-out ${i * 0.04}s infinite alternate` : 'none', opacity: isPlaying ? 1 : 0.3 }} />
-                                ))}
-                            </div>
+
+                        {/* 2. Controls (Centered) */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'center' }}>
+                            <button onClick={prev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipBack size={18} /></button>
+                            
+                            <button onClick={togglePlay} style={{ background: color, border: 'none', cursor: 'pointer', color: '#0d0a14', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'transform 0.15s' }} onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.08)')} onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}>
+                                {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
+                            </button>
+                            
+                            <button onClick={next} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipForward size={18} /></button>
+                        </div>
+
+                        {/* 3. Visualizer (Right) */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '2px', height: '28px', justifyContent: 'flex-end', opacity: isPlaying ? 1 : 0.4 }}>
+                            {Array.from({ length: 18 }).map((_, i) => (
+                                <div key={i} style={{ width: '3px', background: color, borderRadius: '2px', height: isPlaying ? `${6 + (i % 7) * 3}px` : '3px', transition: 'height 0.4s ease', animation: isPlaying ? `waveBar ${0.55 + (i % 5) * 0.15}s ease-in-out ${i * 0.04}s infinite alternate` : 'none' }} />
+                            ))}
                         </div>
                     </div>
             </div>

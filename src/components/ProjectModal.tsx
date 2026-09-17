@@ -71,7 +71,7 @@ export default function ProjectModal() {
                                         className="w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0"
                                         style={{ background: color, boxShadow: `0 0 14px ${accentGlow}` }}
                                     >
-                                        {item.vinylEmoji}
+                                        
                                     </div>
                                     <div>
                                         <p className="font-pixel text-[7px] tracking-widest" style={{ color }}>
@@ -115,7 +115,7 @@ export default function ProjectModal() {
                                 >
                                     {/* Color-matched placeholder with big emoji */}
                                     <div className="flex flex-col items-center gap-3">
-                                        <span style={{ fontSize: 56 }}>{item.vinylEmoji}</span>
+                                        <span className={item.coverFont} style={{ fontSize: "56px" }}>{item.shortTitle}</span>
                                         <div className="flex gap-2">
                                             {(chips.slice(0, 3)).map(c => (
                                                 <span key={c} className="font-mono text-[10px] px-2 py-0.5 rounded"

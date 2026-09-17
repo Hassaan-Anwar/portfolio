@@ -20,7 +20,8 @@ const DISC_BG = `radial-gradient(circle,
 interface Props {
     color: string;
     accentGlow: string;
-    emoji: string;
+    shortTitle: string;
+    coverFont: string;
     label: string;
     title: string;
     isActive: boolean;
@@ -28,7 +29,7 @@ interface Props {
 }
 
 export default function VinylRecord({
-    color, accentGlow, emoji, label, title, isActive, isPlaying,
+    color, accentGlow, shortTitle, coverFont, label, title, isActive, isPlaying,
 }: Props) {
     const [isHovered, setIsHovered] = useState(false);
     const [isPressed, setIsPressed] = useState(false);
@@ -63,7 +64,7 @@ export default function VinylRecord({
                 height: SLEEVE,
                 userSelect: 'none',
                 WebkitUserSelect: 'none',
-                
+
             }}
             draggable={false}
         >
@@ -116,7 +117,7 @@ export default function VinylRecord({
                         zIndex: 2
                     }}
                 >
-                    <span style={{ fontSize: DISC * 0.12 }}>{emoji}</span>
+                    
                 </div>
 
                 {/* Spindle Hole */}
@@ -156,7 +157,7 @@ export default function VinylRecord({
                 }}
             >
                 {/* Big emoji on sleeve */}
-                <span style={{ fontSize: 32, opacity: isActive ? 1 : 0.85, transition: 'opacity 0.3s', pointerEvents: 'none', userSelect: 'none' }}>{emoji}</span>
+                <span className={coverFont} style={{ fontSize: 42, color: "#fff", textShadow: `0 4px 12px rgba(0,0,0,0.8), 0 0 12px ${accentGlow}`, opacity: isActive ? 1 : 0.85, transition: "opacity 0.3s", pointerEvents: "none", userSelect: "none", lineHeight: 1, textAlign: "center" }}>{shortTitle}</span>
 
                 {/* Subtle label text */}
                 <div

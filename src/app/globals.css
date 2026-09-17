@@ -1,4 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=UnifrakturMaguntia&family=Creepster&family=Permanent+Marker&family=Pirata+One&family=Nosifer&display=swap');
+
+.font-album-1 { font-family: 'UnifrakturMaguntia', serif; }
+.font-album-2 { font-family: 'Creepster', display; }
+.font-album-3 { font-family: 'Permanent Marker', cursive; }
+.font-album-4 { font-family: 'Pirata One', display; }
+.font-album-5 { font-family: 'Nosifer', display; }
 
 @tailwind base;
 @tailwind components;

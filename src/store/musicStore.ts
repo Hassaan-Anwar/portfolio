@@ -15,7 +15,8 @@ export interface Project {
   githubUrl: string;
   liveUrl: string;
   vinylLabel: string;
-  vinylEmoji: string;
+  shortTitle: string;
+  coverFont: string;
 }
 
 interface MusicStore {

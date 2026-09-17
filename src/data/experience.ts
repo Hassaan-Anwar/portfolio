@@ -8,7 +8,8 @@ export interface Experience {
     skills: string[];
     color: string;
     accentGlow: string;
-    vinylEmoji: string;
+    shortTitle: string;
+    coverFont: string;
     vinylLabel: string;
 }
 
@@ -25,7 +26,7 @@ export const EXPERIENCES: Experience[] = [
         skills: ['Go', 'Kubernetes', 'gRPC', 'PostgreSQL', 'Redis', 'AWS'],
         color: '#FBBF24',
         accentGlow: 'rgba(0, 242, 254, 0.6)',
-        vinylEmoji: '💻',
+        shortTitle: 'S-ENG', coverFont: 'font-album-1',
         vinylLabel: 'TVM',
     },
     {
@@ -40,7 +41,7 @@ export const EXPERIENCES: Experience[] = [
         skills: ['React', 'TypeScript', 'Python', 'FastAPI', 'Stripe', 'PostgreSQL'],
         color: '#D97706',
         accentGlow: 'rgba(255, 0, 191, 0.6)',
-        vinylEmoji: '🚀',
+        shortTitle: 'F-STD', coverFont: 'font-album-2',
         vinylLabel: 'NSS',
     },
     {
@@ -55,7 +56,7 @@ export const EXPERIENCES: Experience[] = [
         skills: ['Python', 'PyTorch', 'CUDA', 'HPC', 'LaTeX', 'Weights & Biases'],
         color: '#CBB368',
         accentGlow: 'rgba(203, 179, 104, 0.6)',
-        vinylEmoji: '🔬',
+        shortTitle: 'R-AST', coverFont: 'font-album-4',
         vinylLabel: 'QRL',
     },
 ];

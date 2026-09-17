@@ -124,7 +124,7 @@ function PeekDrawer({ children, accentColor, isOpen, setIsOpen }: { children: Re
             setIsOpen(true);
         } else {
             // Close with grace period
-            timer = setTimeout(() => setIsOpen(false), 300);
+            timer = setTimeout(() => setIsOpen(false), 50);
         }
         return () => clearTimeout(timer);
     }, [isHoverZone, isDragging]);
@@ -400,7 +400,7 @@ export default function PixelRoom() {
                                     onPlay: () => useMusicStore.getState().setCurrentAbout(0),
                                     content: (
                                         <VinylRecord
-                                            color="#D97706" accentGlow="rgba(217,119,6,0.6)" emoji="👋" label="HI" title="Hassan (Me)"
+                                            color="#D97706" accentGlow="rgba(217,119,6,0.6)" shortTitle="DEV" coverFont="font-album-2" label="HI" title="Hassan (Me)"
                                             isActive={activeSection === 'about'} isPlaying={activeSection === 'about' && isPlaying}
                                         />
                                     )
@@ -416,7 +416,7 @@ export default function PixelRoom() {
                                 onPlay: () => useMusicStore.getState().setCurrentBestsellers(i),
                                 content: (
                                     <VinylRecord
-                                        color="#FBBF24" accentGlow="rgba(251,191,36,0.6)" emoji="🔥" label={`BS${i}`} title={`Top Hit ${i + 1}`}
+                                        color="#FBBF24" accentGlow="rgba(251,191,36,0.6)" shortTitle={`HOT-${i+1}`} coverFont="font-album-5" label={`BS${i}`} title={`Top Hit ${i + 1}`}
                                         isActive={activeSection === 'bestsellers' && currentBestsellersIndex === i}
                                         isPlaying={activeSection === 'bestsellers' && currentBestsellersIndex === i && isPlaying}
                                     />
@@ -434,7 +434,7 @@ export default function PixelRoom() {
                                     onPlay: () => useMusicStore.getState().setCurrentExperience(i),
                                     content: (
                                         <VinylRecord
-                                            color="#2DD4BF" accentGlow="rgba(45,212,191,0.6)" emoji={exp.vinylEmoji} label={exp.vinylLabel} title={exp.company}
+                                            color="#2DD4BF" accentGlow="rgba(45,212,191,0.6)" shortTitle={exp.shortTitle} coverFont={exp.coverFont} label={exp.vinylLabel} title={exp.company}
                                             isActive={isActive} isPlaying={isActive && isPlaying}
                                         />
                                     )
@@ -452,7 +452,7 @@ export default function PixelRoom() {
                                     onPlay: () => useMusicStore.getState().setCurrentProject(i),
                                     content: (
                                         <VinylRecord
-                                            color="#B48EFF" accentGlow="rgba(180,142,255,0.6)" emoji={proj.vinylEmoji} label={proj.vinylLabel} title={proj.title}
+                                            color="#B48EFF" accentGlow="rgba(180,142,255,0.6)" shortTitle={proj.shortTitle} coverFont={proj.coverFont} label={proj.vinylLabel} title={proj.title}
                                             isActive={isActive} isPlaying={isActive && isPlaying}
                                         />
                                     )

@@ -72,7 +72,7 @@ export default function VinylSprite({ index }: VinylProps) {
                             boxShadow: isActive ? `0 0 6px ${project.color}` : 'none',
                         }}
                     >
-                        <span style={{ fontSize: 8, lineHeight: 1 }}>{project.vinylEmoji}</span>
+                        
                     </div>
                 </div>
             </motion.div>

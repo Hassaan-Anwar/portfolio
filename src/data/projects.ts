@@ -16,7 +16,7 @@ export const PROJECTS: Project[] = [
         githubUrl: '#',
         liveUrl: '#',
         vinylLabel: 'NXP',
-        vinylEmoji: '🌐',
+        shortTitle: 'NEXUS', coverFont: 'font-album-2',
     },
     {
         id: 1,
@@ -33,7 +33,7 @@ export const PROJECTS: Project[] = [
         githubUrl: '#',
         liveUrl: '#',
         vinylLabel: 'SWF',
-        vinylEmoji: '🎵',
+        shortTitle: 'S-WAVE', coverFont: 'font-album-3',
     },
     {
         id: 2,
@@ -50,7 +50,7 @@ export const PROJECTS: Project[] = [
         githubUrl: '#',
         liveUrl: '#',
         vinylLabel: 'ORB',
-        vinylEmoji: '🛸',
+        shortTitle: 'ORBIT', coverFont: 'font-album-5',
     },
     {
         id: 3,
@@ -67,7 +67,7 @@ export const PROJECTS: Project[] = [
         githubUrl: '#',
         liveUrl: '#',
         vinylLabel: 'GHM',
-        vinylEmoji: '👻',
+        shortTitle: 'GHOST', coverFont: 'font-album-4',
     },
     {
         id: 4,
@@ -84,6 +84,6 @@ export const PROJECTS: Project[] = [
         githubUrl: '#',
         liveUrl: '#',
         vinylLabel: 'NRC',
-        vinylEmoji: '🎨',
+        shortTitle: 'N-CVS', coverFont: 'font-album-1',
     },
 ];

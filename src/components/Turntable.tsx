@@ -77,7 +77,7 @@ export default function Turntable() {
                                 boxShadow: `0 0 16px ${project.accentGlow}`,
                             }}
                         >
-                            <span style={{ fontSize: 16 }}>{project.vinylEmoji}</span>
+                            
                             <span
                                 className="font-pixel"
                                 style={{ fontSize: 4, color: '#0d0a14', letterSpacing: 1 }}

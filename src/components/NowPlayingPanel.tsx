@@ -26,8 +26,8 @@ export default function NowPlayingPanel() {
     let item: any;
     if (activeSection === 'projects') item = PROJECTS[currentProjectIndex];
     else if (activeSection === 'experience') item = EXPERIENCES[currentExperienceIndex];
-    else if (activeSection === 'about') item = { title: 'Hassan (Me)', subtitle: 'Full-Stack Developer', year: '2024', longDescription: 'Hello! This is my interactive portfolio built with React and Framer Motion. Sift through the crates on the left to see my work and experience.', skills: ['React', 'TypeScript', 'Next.js', 'Framer Motion'], color: '#D97706', accentGlow: 'rgba(217,119,6,0.6)', vinylEmoji: '👋', vinylLabel: 'HI' };
-    else item = { title: `Top Hit ${currentBestsellersIndex + 1}`, subtitle: 'Featured Item', year: '2024', description: 'A highly rated project or item from the catalog.', skills: ['Design', 'Code'], color: '#FBBF24', accentGlow: 'rgba(251,191,36,0.6)', vinylEmoji: '🔥', vinylLabel: `BS${currentBestsellersIndex}` };
+    else if (activeSection === 'about') item = { title: 'Hassan (Me)', subtitle: 'Full-Stack Developer', year: '2024', longDescription: 'Hello! This is my interactive portfolio built with React and Framer Motion. Sift through the crates on the left to see my work and experience.', skills: ['React', 'TypeScript', 'Next.js', 'Framer Motion'], color: '#D97706', accentGlow: 'rgba(217,119,6,0.6)', shortTitle: 'DEV', coverFont: 'font-album-2', vinylLabel: 'HI' };
+    else item = { title: `Top Hit ${currentBestsellersIndex + 1}`, subtitle: 'Featured Item', year: '2024', description: 'A highly rated project or item from the catalog.', skills: ['Design', 'Code'], color: '#FBBF24', accentGlow: 'rgba(251,191,36,0.6)', shortTitle: 'HOT', coverFont: 'font-album-5', vinylLabel: `BS${currentBestsellersIndex}` };
 
     const isProject = activeSection === 'projects';
     let color = '#302C44';
@@ -167,7 +167,7 @@ export default function NowPlayingPanel() {
                                         boxShadow: `0 0 20px ${accentGlow}`, zIndex: 2,
                                     }}
                                 >
-                                    <span style={{ fontSize: '32px', zIndex: 2 }}>{item.vinylEmoji}</span>
+                                    <span style={{ fontSize: '32px', zIndex: 2 }}>{item.shortTitle}</span>
                                     <span className="font-pixel" style={{ fontSize: '5px', color: '#0d0a14', letterSpacing: '1px', zIndex: 2 }}>
                                         {item.vinylLabel}
                                     </span>
@@ -274,8 +274,8 @@ export default function NowPlayingPanel() {
                                 transition={{ duration: 0.2 }}
                                 style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}
                             >
-                                <div style={{ width: '36px', height: '36px', borderRadius: '6px', flexShrink: 0, background: `linear-gradient(135deg, ${color}66, #1B1229)`, border: `1px solid ${color}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
-                                    {item.vinylEmoji}
+                                <div style={{ width: '36px', height: '36px', borderRadius: '6px', flexShrink: 0, background: `linear-gradient(135deg, ${color}66, #1B1229)`, border: `1px solid ${color}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
+                                    <span className={item.coverFont}>{item.shortTitle}</span>
                                 </div>
                                 <div style={{ minWidth: 0 }}>
                                     <p style={{ fontSize: '12px', fontWeight: 700, color: '#F4F1EA', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</p>
@@ -359,7 +359,7 @@ export default function NowPlayingPanel() {
                                 boxShadow: `0 12px 32px rgba(0,0,0,0.5), inset 0 0 40px ${color}15`
                             }}
                         >
-                            <span style={{ fontSize: '80px', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))', zIndex: 2 }}>{item.vinylEmoji}</span>
+                            <span style={{ fontSize: '80px', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))', zIndex: 2 }}>{item.shortTitle}</span>
                             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6))', zIndex: 1 }} />
                             <p style={{ position: 'absolute', bottom: '16px', left: '20px', fontSize: '12px', color: 'rgba(255,255,255,0.7)', zIndex: 2 }}>Visual Preview</p>
                         </div>

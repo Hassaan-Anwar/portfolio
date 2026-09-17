@@ -144,7 +144,7 @@ function PeekDrawer({ children, accentColor, isOpen, setIsOpen }: { children: Re
                     left: 0,
                     top: 0,
                     bottom: 0,
-                    width: DRAWER_COLLAPSED + 30,
+                    width: DRAWER_COLLAPSED, /* no extra extension */
                     zIndex: 100,
                     pointerEvents: isOpen ? 'none' : 'auto',
                 }}

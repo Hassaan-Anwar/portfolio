@@ -247,6 +247,39 @@ body {
   font-family: 'JetBrains Mono', monospace;
 }
 
+.gatefold-paper {
+  background-image:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.045), transparent 32%, rgba(255, 255, 255, 0.025) 74%, transparent),
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--gatefold-accent) 14%, transparent), transparent 32%);
+}
+
+.vinyl-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+  padding: 8px 11px;
+  color: #161218;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.32);
+  transform: rotate(-2deg);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.vinyl-sticker:hover {
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow: 3px 5px 0 rgba(0, 0, 0, 0.35);
+}
+
+.vinyl-sticker-demo { background: #91c960; }
+.vinyl-sticker-source { background: #df6d54; transform: rotate(2deg); }
+
 /* Glassmorphism card */
 .glass {
   background: rgba(27, 18, 41, 0.7);

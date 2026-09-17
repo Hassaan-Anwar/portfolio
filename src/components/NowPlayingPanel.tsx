@@ -2,9 +2,9 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMusicStore } from '@/store/musicStore';
-import { PROJECTS } from '@/data/projects';
-import { EXPERIENCES } from '@/data/experience';
-import { GitBranch, SkipBack, SkipForward, Play, Pause } from 'lucide-react';
+import { getActiveInfoItem } from '@/data/info';
+import InfoPanel from '@/components/InfoPanel';
+import { SkipBack, SkipForward, Play, Pause } from 'lucide-react';
 
 const DISC_BG = `radial-gradient(circle,
   #222 0% 25%,
@@ -23,13 +23,12 @@ export default function NowPlayingPanel() {
     const { activeSection, currentAboutIndex, currentBestsellersIndex, currentProjectIndex, currentExperienceIndex, isPlaying, isDragging, next, prev, togglePlay } =
         useMusicStore();
 
-    let item: any;
-    if (activeSection === 'projects') item = PROJECTS[currentProjectIndex];
-    else if (activeSection === 'experience') item = EXPERIENCES[currentExperienceIndex];
-    else if (activeSection === 'about') item = { title: 'Hassan (Me)', subtitle: 'Full-Stack Developer', year: '2024', longDescription: 'Hello! This is my interactive portfolio built with React and Framer Motion. Sift through the crates on the left to see my work and experience.', skills: ['React', 'TypeScript', 'Next.js', 'Framer Motion'], color: '#D97706', accentGlow: 'rgba(217,119,6,0.6)', shortTitle: 'DEV', coverFont: 'font-album-2', vinylLabel: 'HI' };
-    else item = { title: `Top Hit ${currentBestsellersIndex + 1}`, subtitle: 'Featured Item', year: '2024', description: 'A highly rated project or item from the catalog.', skills: ['Design', 'Code'], color: '#FBBF24', accentGlow: 'rgba(251,191,36,0.6)', shortTitle: 'HOT', coverFont: 'font-album-5', vinylLabel: `BS${currentBestsellersIndex}` };
-
-    const isProject = activeSection === 'projects';
+    const item = getActiveInfoItem(activeSection, {
+        about: currentAboutIndex,
+        bestsellers: currentBestsellersIndex,
+        projects: currentProjectIndex,
+        experience: currentExperienceIndex,
+    });
     let color = '#302C44';
     let accentGlow = 'rgba(48,44,68,0.5)';
     if (activeSection === 'about') { color = '#D97706'; accentGlow = 'rgba(217,119,6,0.6)'; }
@@ -40,12 +39,6 @@ export default function NowPlayingPanel() {
 
     const title = 'title' in item ? item.title : item.company;
     const subtitle = 'subtitle' in item ? item.subtitle : item.role;
-    const year = 'year' in item ? item.year : item.period;
-
-    const desc = (item as any).longDescription || (item as any).description;
-
-    const chips = 'techStack' in item ? item.techStack : item.skills;
-    const githubUrl = 'githubUrl' in item ? item.githubUrl : '#';
 
     return (
         <div
@@ -302,14 +295,11 @@ export default function NowPlayingPanel() {
                     </div>
             </div>
 
-            {/* ── RIGHT HALF: Project Details & Image Dashboard ── */}
+            {/* ── RIGHT HALF: Selectable information treatment ── */}
             <div
                 style={{
                     overflowY: 'auto',
-                    padding: '40px 48px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '32px',
+                    padding: '28px clamp(20px, 4vw, 48px)',
                     scrollbarWidth: 'thin',
                     scrollbarColor: '#302C44 transparent'
                 }}
@@ -321,101 +311,9 @@ export default function NowPlayingPanel() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
+                        style={{ minWidth: 0, height: '100%' }}
                     >
-                        {/* Title & Metadata */}
-                        <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                                <span className="font-pixel tracking-widest" style={{ fontSize: '8px', color, padding: '4px 8px', background: `${color}15`, borderRadius: '4px', border: `1px solid ${color}40` }}>
-                                    {isProject ? 'PROJECT' : 'EXPERIENCE'}
-                                </span>
-                                <span className="font-mono" style={{ fontSize: '12px', color: '#9b93ae' }}>
-                                    {year}
-                                </span>
-                            </div>
-                            <h2 style={{ fontWeight: '800', fontSize: '32px', color: '#F4F1EA', lineHeight: 1.1, textShadow: `0 0 24px ${color}40` }}>
-                                {title}
-                            </h2>
-                            <p className="font-mono" style={{ fontSize: '14px', color: '#c4bcce', marginTop: '6px' }}>
-                                {subtitle}
-                            </p>
-                        </div>
-
-                        {/* Huge Image Placeholder visually rich representation */}
-                        <div
-                            style={{
-                                width: '100%',
-                                height: '240px',
-                                borderRadius: '16px',
-                                overflow: 'hidden',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                position: 'relative',
-                                background: `linear-gradient(135deg, ${color}22, #1B1229)`,
-                                border: `1px solid ${color}40`,
-                                boxShadow: `0 12px 32px rgba(0,0,0,0.5), inset 0 0 40px ${color}15`
-                            }}
-                        >
-                            <span style={{ fontSize: '80px', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))', zIndex: 2 }}>{item.shortTitle}</span>
-                            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6))', zIndex: 1 }} />
-                            <p style={{ position: 'absolute', bottom: '16px', left: '20px', fontSize: '12px', color: 'rgba(255,255,255,0.7)', zIndex: 2 }}>Visual Preview</p>
-                        </div>
-
-                        {/* Description */}
-                        <div>
-                            <p className="font-pixel tracking-widest" style={{ fontSize: '8px', color, marginBottom: '12px' }}>
-                                SYSTEM_LOG
-                            </p>
-                            <p style={{ fontSize: '15px', color: '#d3cce0', lineHeight: 1.7 }}>
-                                {desc}
-                            </p>
-                        </div>
-
-                        {/* Tech / Skills */}
-                        <div>
-                            <p className="font-pixel tracking-widest" style={{ fontSize: '8px', color, marginBottom: '12px' }}>
-                                {isProject ? 'TECH_STACK' : 'CORE_SKILLS'}
-                            </p>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                                {chips.map((t: string) => (
-                                    <span
-                                        key={t}
-                                        className="font-mono"
-                                        style={{
-                                            fontSize: '12px',
-                                            padding: '6px 12px',
-                                            borderRadius: '8px',
-                                            background: `linear-gradient(180deg, ${color}15, transparent)`,
-                                            color: '#F4F1EA',
-                                            border: `1px solid ${color}40`,
-                                            boxShadow: `0 4px 12px rgba(0,0,0,0.2)`
-                                        }}
-                                    >
-                                        {t}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        {isProject && (
-                            <div style={{ display: 'flex', paddingTop: '8px' }}>
-                                <a
-                                    href={githubUrl}
-                                    className="transition-all hover:scale-105"
-                                    style={{
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                                        fontSize: '14px', fontWeight: 'bold', padding: '12px 24px', borderRadius: '12px',
-                                        background: `${color}18`, color, border: `1px solid ${color}60`, textDecoration: 'none',
-                                        boxShadow: `0 0 20px ${color}20`
-                                    }}
-                                >
-                                    <GitBranch size={16} /> VIEW REPOSITORY
-                                </a>
-                            </div>
-                        )}
-
+                        <InfoPanel item={item} />
                     </motion.div>
                 </AnimatePresence>
             </div>

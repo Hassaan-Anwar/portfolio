@@ -1,4 +1,6 @@
-export interface Experience {
+import type { InfoPresentation } from './info';
+
+export interface Experience extends InfoPresentation {
     id: number;
     company: string;
     role: string;
@@ -26,6 +28,9 @@ export const EXPERIENCES: Experience[] = [
         skills: ['Go', 'Kubernetes', 'gRPC', 'PostgreSQL', 'Redis', 'AWS'],
         color: '#FBBF24',
         accentGlow: 'rgba(0, 242, 254, 0.6)',
+        infoDesign: 'gatefold-liner', catalogId: 'EXP-01', infoCategory: 'SOFTWARE ENGINEERING', formatLabel: 'PRODUCTION SYSTEMS',
+        imageCaption: 'STUDIO SESSION: DISTRIBUTED SYSTEMS WORKBENCH',
+        credits: { engineering: ['Go', 'gRPC', 'PostgreSQL'], orchestration: ['Kubernetes', 'Redis', 'AWS'], masteredAt: 'TECHVISION LABS' },
         shortTitle: 'S-ENG', coverFont: 'font-album-1',
         vinylLabel: 'TVM',
     },
@@ -41,6 +46,9 @@ export const EXPERIENCES: Experience[] = [
         skills: ['React', 'TypeScript', 'Python', 'FastAPI', 'Stripe', 'PostgreSQL'],
         color: '#D97706',
         accentGlow: 'rgba(255, 0, 191, 0.6)',
+        infoDesign: 'gatefold-liner', catalogId: 'EXP-02', infoCategory: 'FULL-STACK INTERNSHIP', formatLabel: 'PRODUCT DELIVERY',
+        imageCaption: 'STUDIO SESSION: CLIENT DASHBOARD RELEASE',
+        credits: { engineering: ['React', 'TypeScript', 'FastAPI'], orchestration: ['Stripe', 'PostgreSQL'], masteredAt: 'NOVASPARK STUDIO' },
         shortTitle: 'F-STD', coverFont: 'font-album-2',
         vinylLabel: 'NSS',
     },
@@ -56,6 +64,9 @@ export const EXPERIENCES: Experience[] = [
         skills: ['Python', 'PyTorch', 'CUDA', 'HPC', 'LaTeX', 'Weights & Biases'],
         color: '#CBB368',
         accentGlow: 'rgba(203, 179, 104, 0.6)',
+        infoDesign: 'gatefold-liner', catalogId: 'EXP-03', infoCategory: 'AI RESEARCH', formatLabel: 'MODEL OPTIMIZATION',
+        imageCaption: 'STUDIO SESSION: NEURAL PRUNING EXPERIMENTS',
+        credits: { engineering: ['Python', 'PyTorch', 'CUDA'], orchestration: ['HPC', 'Weights & Biases'], masteredAt: 'QUANTUM RESEARCH LAB' },
         shortTitle: 'R-AST', coverFont: 'font-album-4',
         vinylLabel: 'QRL',
     },

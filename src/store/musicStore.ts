@@ -1,8 +1,9 @@
 import { create } from 'zustand';
+import type { InfoPresentation } from '@/data/info';
 
 export type ActiveSection = 'about' | 'bestsellers' | 'projects' | 'experience';
 
-export interface Project {
+export interface Project extends InfoPresentation {
   id: number;
   title: string;
   subtitle: string;

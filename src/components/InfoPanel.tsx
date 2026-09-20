@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import type { CSSProperties, ComponentType } from 'react';
 import type { InfoItem } from '@/data/info';
+import StudioMasterSheet from './designs/StudioMasterSheet';
 
 interface InfoPanelProps {
   item: InfoItem;
@@ -20,8 +21,8 @@ function GatefoldLiner({ item }: InfoPanelProps) {
   const description = item.longDescription || item.description;
   const color = item.color || '#333';
 
-  const canViewSource = isProject && item.githubUrl && item.githubUrl !== '#';
-  const canViewDemo = isProject && item.liveUrl && item.liveUrl !== '#';
+  const canViewSource = isProject && !!item.githubUrl;
+  const canViewDemo = isProject && !!item.liveUrl;
 
   // Extract new structured credits provided in the dataset
   const credits = 'credits' in item ? item.credits : { engineering: [], orchestration: [], masteredAt: '' };
@@ -64,16 +65,13 @@ function GatefoldLiner({ item }: InfoPanelProps) {
         <h2 className="font-editorial italic" style={{ fontSize: '28px', color: '#3a3c40', marginTop: '6px' }}>
           {subtitle}
         </h2>
-        <p className="font-mono mt-6 mb-4" style={{ fontSize: '12.5px', color: '#444', letterSpacing: '1px', textTransform: 'uppercase' }}>
+        <p className="font-mono mt-6 mb-4" style={{ fontSize: '12.5px', color: '#1a1c1d', letterSpacing: '1px', textTransform: 'uppercase' }}>
           RELEASED: {year} &bull; FORMAT: {item.formatLabel ?? item.infoCategory}
         </p>
       </div>
 
-      {/* Top Divider */}
-      <hr className="w-full border-t border-black opacity-20 mb-6" />
-
       {/* Central Content Flex Container */}
-      <div className="flex-1 flex flex-row gap-8 overflow-hidden min-h-0 text-left">
+      <div className="flex-1 flex flex-row gap-6 overflow-hidden min-h-0 text-left">
 
         {/* Left: Vintage Photograph Graphic */}
         <div className="flex flex-col shrink-0 gap-2 w-1/2 max-w-[420px]">
@@ -124,7 +122,7 @@ function GatefoldLiner({ item }: InfoPanelProps) {
         </div>
 
         {/* Right: Editorial Body Copy */}
-        <div className="flex-1 overflow-y-auto min-h-0 pr-4 flex flex-col" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.2) transparent' }}>
+        <div className="flex-1 overflow-y-auto min-h-0 pl-8 pr-4 flex flex-col" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.2) transparent' }}>
           <div
             className="font-sans leading-[1.65]"
             style={{
@@ -139,74 +137,77 @@ function GatefoldLiner({ item }: InfoPanelProps) {
         </div>
       </div>
 
-      {/* Bottom Divider */}
-      <hr className="w-full border-t border-black opacity-20 mt-6 mb-4" />
-
       {/* Bottom Credits / Tech Stack */}
-      <div className="w-full flex flex-row items-end justify-between relative pb-2 pt-1 text-left mt-auto overflow-hidden">
+      <div className="w-full flex flex-col gap-4 mt-auto pt-6 pb-2 text-left relative overflow-hidden">
 
-        <div className="font-mono uppercase leading-[1.6] text-[#666]" style={{ fontSize: '10.5px', letterSpacing: '0.08em', maxWidth: '65%' }}>
-          <strong className="text-black font-extrabold mr-1.5" style={{ fontSize: '11px' }}>PERSONNEL & CREDITS</strong> |
-          {hasEngineering && <span className="ml-1.5">ENGINEERED & COMPOSED WITH: <strong className="text-[#1a1c1d] font-bold tracking-wider">{formatCredits(credits.engineering)}</strong> |</span>}
-          {hasOrchestration && <span className="ml-1.5">MIXED AT: <strong className="text-[#1a1c1d] font-bold tracking-wider">{formatCredits(credits.orchestration)}</strong> |</span>}
-          {credits.masteredAt && <span className="ml-1.5">MASTERED AT: <strong className="text-[#1a1c1d] font-bold tracking-wider">{credits.masteredAt}</strong></span>}
-          {hasSkills && <span className="ml-1.5">PERSONNEL: <strong className="text-[#1a1c1d] font-bold tracking-wider">{formatCredits(skills)}</strong></span>}
+        <div className="font-mono uppercase leading-[1.7] text-[#111] w-full" style={{ fontSize: '11px', letterSpacing: '0.04em' }}>
+          <strong className="font-extrabold mr-1.5" style={{ fontSize: '11.5px' }}>PERSONNEL & CREDITS</strong> |
+          {hasEngineering && <span className="ml-1.5"><strong className="mr-1 tracking-wider font-bold">ENGINEERED & COMPOSED WITH:</strong>{formatCredits(credits.engineering)} |</span>}
+          {hasOrchestration && <span className="ml-1.5"><strong className="mr-1 tracking-wider font-bold">MIXED AT:</strong>{formatCredits(credits.orchestration)} |</span>}
+          {credits.masteredAt && <span className="ml-1.5"><strong className="mr-1 tracking-wider font-bold">MASTERED AT:</strong>{credits.masteredAt}</span>}
+          {hasSkills && <span className="ml-1.5"><strong className="mr-1 tracking-wider font-bold">PERSONNEL:</strong>{formatCredits(skills)}</span>}
         </div>
 
         {/* Peelable Promo Stickers */}
-        <div className="flex flex-row gap-3 shrink-0 ml-4 pb-1 relative z-10 self-end">
-          {/* View Source Code Button (Red hype sticker) */}
-          <motion.a
-            href={canViewSource ? item.githubUrl : undefined}
-            target="_blank"
-            whileHover={canViewSource ? { scale: 1.05, rotate: -4 } : {}}
-            whileTap={canViewSource ? { scale: 0.95 } : {}}
-            className={`font-bold flex items-center justify-center text-center shadow-lg relative ${canViewSource ? 'cursor-pointer pointer-events-auto' : 'pointer-events-none opacity-60 grayscale-[40%]'}`}
-            style={{
-              background: '#e34739',
-              color: '#fff',
-              width: '105px',
-              height: '44px',
-              borderRadius: '3px',
-              transform: 'rotate(-3deg)',
-              fontSize: '11px',
-              lineHeight: 1.1,
-              borderTop: '1px solid rgba(255,255,255,0.4)',
-              borderLeft: '1px solid rgba(255,255,255,0.4)',
-              textTransform: 'uppercase',
-            }}
-          >
-            VIEW<br />SOURCE CODE
-            {/* Little peeled corner element */}
-            <div className="absolute top-0 right-0 w-3 h-3 bg-[#f2867c]" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)', boxShadow: 'inset -1px -1px 2px rgba(0,0,0,0.3)' }} />
-          </motion.a>
+        {(canViewSource || canViewDemo) && (
+          <div className="flex flex-row gap-3 self-end relative z-10">
+            {/* View Source Code Button (Red hype sticker) */}
+            {canViewSource && (
+              <motion.a
+                href={item.githubUrl}
+                target="_blank"
+                whileHover={{ scale: 1.05, rotate: -4 }}
+                whileTap={{ scale: 0.95 }}
+                className="font-bold flex items-center justify-center text-center shadow-lg relative cursor-pointer pointer-events-auto"
+                style={{
+                  background: '#e34739',
+                  color: '#fff',
+                  width: '105px',
+                  height: '44px',
+                  borderRadius: '3px',
+                  transform: 'rotate(-3deg)',
+                  fontSize: '11px',
+                  lineHeight: 1.1,
+                  borderTop: '1px solid rgba(255,255,255,0.4)',
+                  borderLeft: '1px solid rgba(255,255,255,0.4)',
+                  textTransform: 'uppercase',
+                }}
+              >
+                VIEW<br />SOURCE CODE
+                {/* Little peeled corner element */}
+                <div className="absolute top-0 right-0 w-3 h-3 bg-[#f2867c]" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)', boxShadow: 'inset -1px -1px 2px rgba(0,0,0,0.3)' }} />
+              </motion.a>
+            )}
 
-          {/* Demo Available Button (Green hype sticker) */}
-          <motion.a
-            href={canViewDemo ? item.liveUrl : undefined}
-            target="_blank"
-            whileHover={canViewDemo ? { scale: 1.05, rotate: 2 } : {}}
-            whileTap={canViewDemo ? { scale: 0.95 } : {}}
-            className={`font-bold flex items-center justify-center text-center shadow-lg relative ${canViewDemo ? 'cursor-pointer pointer-events-auto' : 'pointer-events-none opacity-60 grayscale-[40%]'}`}
-            style={{
-              background: '#34ba61',
-              color: '#fff',
-              width: '105px',
-              height: '44px',
-              borderRadius: '3px',
-              transform: 'rotate(2deg)',
-              fontSize: '11px',
-              lineHeight: 1.1,
-              borderTop: '1px solid rgba(255,255,255,0.4)',
-              borderLeft: '1px solid rgba(255,255,255,0.4)',
-              textTransform: 'uppercase',
-            }}
-          >
-            DEMO<br />AVAILABLE
-            {/* Little peeled corner element */}
-            <div className="absolute bottom-0 left-0 w-3 h-3 bg-[#77d997]" style={{ clipPath: 'polygon(100% 100%, 0 0, 0 100%)', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.3)' }} />
-          </motion.a>
-        </div>
+            {/* Demo Available Button (Green hype sticker) */}
+            {canViewDemo && (
+              <motion.a
+                href={item.liveUrl}
+                target="_blank"
+                whileHover={{ scale: 1.05, rotate: 2 }}
+                whileTap={{ scale: 0.95 }}
+                className="font-bold flex items-center justify-center text-center shadow-lg relative cursor-pointer pointer-events-auto"
+                style={{
+                  background: '#34ba61',
+                  color: '#fff',
+                  width: '105px',
+                  height: '44px',
+                  borderRadius: '3px',
+                  transform: 'rotate(2deg)',
+                  fontSize: '11px',
+                  lineHeight: 1.1,
+                  borderTop: '1px solid rgba(255,255,255,0.4)',
+                  borderLeft: '1px solid rgba(255,255,255,0.4)',
+                  textTransform: 'uppercase',
+                }}
+              >
+                DEMO<br />AVAILABLE
+                {/* Little peeled corner element */}
+                <div className="absolute bottom-0 left-0 w-3 h-3 bg-[#77d997]" style={{ clipPath: 'polygon(100% 100%, 0 0, 0 100%)', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.3)' }} />
+              </motion.a>
+            )}
+          </div>
+        )}
       </div>
 
     </article>
@@ -215,6 +216,7 @@ function GatefoldLiner({ item }: InfoPanelProps) {
 
 const INFO_DESIGNS = {
   'gatefold-liner': GatefoldLiner,
+  'studio-master-sheet': StudioMasterSheet,
 } satisfies Record<InfoItem['infoDesign'], ComponentType<InfoPanelProps>>;
 
 export default function InfoPanel(props: InfoPanelProps) {

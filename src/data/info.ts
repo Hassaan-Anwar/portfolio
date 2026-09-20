@@ -3,7 +3,7 @@ import { PROJECTS } from './projects';
 import { EXPERIENCES } from './experience';
 
 /** The presentation treatment for an information panel. */
-export type InfoDesign = 'gatefold-liner';
+export type InfoDesign = 'gatefold-liner' | 'studio-master-sheet';
 
 export interface InfoCredits {
   engineering: string[];
@@ -55,7 +55,7 @@ export const FEATURED: SupplementalInfoItem[] = Array.from({ length: 3 }, (_, id
   longDescription: 'A hand-picked release from the catalog. This space is ready for the project story, technical decisions, and the details that made the work worth featuring.',
   skills: ['Design', 'Code'], color: '#FBBF24', accentGlow: 'rgba(251,191,36,0.6)',
   shortTitle: 'HOT', coverFont: 'font-album-5', vinylLabel: `BS${id}`,
-  infoDesign: 'gatefold-liner', catalogId: `FT-${String(id + 1).padStart(2, '0')}`, infoCategory: 'FEATURED RELEASE', formatLabel: 'SELECTED WORK',
+  infoDesign: 'studio-master-sheet', catalogId: `FT-${String(id + 1).padStart(2, '0')}`, infoCategory: 'FEATURED RELEASE', formatLabel: 'SELECTED WORK',
   imageCaption: 'ARCHIVE FRAME: FEATURED RELEASE DOCUMENTATION',
   credits: { engineering: ['Design', 'Code'], masteredAt: 'DEV.LAIR ARCHIVE' },
 }));

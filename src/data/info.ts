@@ -3,7 +3,7 @@ import { PROJECTS } from './projects';
 import { EXPERIENCES } from './experience';
 
 /** The presentation treatment for an information panel. */
-export type InfoDesign = 'gatefold-liner' | 'studio-master-sheet';
+export type InfoDesign = 'gatefold-liner' | 'studio-master-sheet' | 'broadsheet';
 
 export interface InfoCredits {
   engineering: string[];

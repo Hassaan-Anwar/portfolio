@@ -73,11 +73,11 @@ export default function GatefoldLiner({
             {/* Top Divider */}
             <hr className="w-full border-t border-[rgba(0,0,0,0.8)] opacity-20 mb-6" />
 
-            {/* Central Content Flex Container */}
-            <div className="flex-1 flex flex-row gap-8 overflow-hidden min-h-0">
+            {/* Central Content Grid Container */}
+            <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 overflow-hidden min-h-0">
 
-                {/* Left: Vintage Photograph Graphic */}
-                <div className="flex flex-col shrink-0 gap-2 w-[45%] max-w-[400px]">
+                {/* Left: Vintage Photograph Graphic (Col 3) */}
+                <div className="lg:col-span-3 flex flex-col gap-2">
                     <div
                         className="w-full relative rounded-sm overflow-hidden flex flex-col justify-center items-center"
                         style={{
@@ -120,12 +120,12 @@ export default function GatefoldLiner({
                     </div>
                     {/* Tiny caption under photograph */}
                     <div className="text-center font-mono uppercase mt-1" style={{ fontSize: '8px', color: '#555', letterSpacing: 1, fontWeight: 'bold' }}>
-                        STUDIO SESSION: VISUALIZER PROTOTYPE
+                        {'imageCaption' in item ? item.imageCaption : `FIG 1.0 — ${title}`}
                     </div>
                 </div>
 
-                {/* Right: Editorial Body Copy */}
-                <div className="flex-1 overflow-y-auto min-h-0 pr-4" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.2) transparent' }}>
+                {/* Right: Editorial Body Copy (Col 9) */}
+                <div className="lg:col-span-9 flex flex-col h-full overflow-y-auto pr-4" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.2) transparent' }}>
                     <div
                         className="font-sans leading-relaxed"
                         style={{

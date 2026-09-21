@@ -24,7 +24,7 @@ export const EXPERIENCES: Experience[] = [
         description:
             'Built distributed microservices and optimized real-time data pipelines processing 500k events/day with sub-10ms latency.',
         longDescription:
-            "At TechVision Labs I owned the core data-ingestion microservice portfolio, migrating a monolith to Go-based gRPC services on Kubernetes. Reduced p99 latency from 120ms to 8ms, introduced circuit-breaker patterns, and led a 6-engineer squad through two major product launches.",
+            "At TechVision Labs I owned the core data-ingestion microservice portfolio, migrating a monolith to Go-based gRPC services on Kubernetes. Reduced p99 latency from 120ms to 8ms, introduced circuit-breaker patterns, and led a 6-engineer squad through two major product launches. Ihave done so many things as well like this and this and this and this and this and this and this and this and this",
         skills: ['Go', 'Kubernetes', 'gRPC', 'PostgreSQL', 'Redis', 'AWS'],
         color: '#FBBF24',
         accentGlow: 'rgba(0, 242, 254, 0.6)',

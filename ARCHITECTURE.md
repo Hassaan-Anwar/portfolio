@@ -98,6 +98,17 @@ An internal component that manages the sliding library sidebar:
 - Two decorative cat GIFs: sleeping calico on top of turntable, pixel cat sticker on the plinth corner.
 - Uses `AnimatePresence` with `mode="popLayout"` for smooth crossfade transitions between different active records.
 
+#### F. The Dynamic Info Engine (`InfoPanel.tsx` & Designs)
+Instead of a rigid, single-layout display for the right-hand dashboard, the application uses a dynamic design registry pattern to render project information.
+- **`InfoPanel.tsx`**: Acts as a component router. It maintains an `INFO_DESIGNS` dictionary that maps string keys to specific React layout components. 
+- **Data-Driven Routing**: Every item in the data payloads (`projects.ts`, `experience.ts`, etc.) defines an `infoDesign` property. When a record is "played," it is passed to `InfoPanel`, which dynamically looks up and renders its explicitly assigned UI layout.
+- **Design Modules (`src/components/designs/`)**:
+  - `GatefoldLiner`: A clean, editorial-style layout using dense typographical columns and traditional album-sleeve margins, preserving spatial integrity for narrative text. Primarily used for Experience and About pages.
+  - `StudioMasterSheet`: An intricate, highly skeuomorphic "analog rack gear" design. It features 3D CSS faders, deep-recessed glowing toggle switches, and CRT monitor styling for projects demanding a visceral, tactile maker aesthetic.
+  - `GlassModal`: A modern, translucent UI (`bg-white/60`, `backdrop-blur`) utilizing a strict 60/40 CSS Grid. It elegantly isolates the main project visual and description from core telemetry (Tech Stack, Release Year) using a minimalist, bright aesthetic.
+
+This architecture lets the portfolio scale layout variations infinitely. Introducing a drastically new visual scheme for a specific project requires zero changes to the core playback engine—just a new component file registered to `INFO_DESIGNS`.
+
 ---
 
 ## 6. CSS & Z-Index Management Reference

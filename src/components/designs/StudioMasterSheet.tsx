@@ -110,11 +110,11 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
 
                 {/* Log entries */}
                 <div className="flex-1 overflow-y-auto min-h-0 flex flex-col gap-4 pt-1"
-                    style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.07) transparent' }}>
+                    style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.07) transparent', paddingLeft: '24px' }}>
                     {logs.map((log, i) => (
                         <div key={i} className="flex gap-3">
                             <span style={{ color: '#52525b', flexShrink: 0, fontSize: '13px', marginTop: '2px' }}>-</span>
-                            <div style={{ fontSize: '13px', lineHeight: 1.65 }}>
+                            <div style={{ fontSize: '13px', lineHeight: 1.65, textAlign: 'justify' }}>
                                 <span style={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.12em', fontSize: '11px' }}>
                                     LOG {String(i + 1).padStart(2, '0')}:{' '}
                                 </span>

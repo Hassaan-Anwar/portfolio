@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import type { CSSProperties, ComponentType } from 'react';
 import type { InfoItem } from '@/data/info';
 import StudioMasterSheet from './designs/StudioMasterSheet';
-import Broadsheet from './designs/Broadsheet';
+import Newspaper from './designs/Newspaper';
 
 interface InfoPanelProps {
   item: InfoItem;
@@ -122,7 +122,7 @@ function GatefoldLiner({ item }: InfoPanelProps) {
         {/* Text flows around float and wraps below image when long enough */}
         <p
           className="font-sans"
-          style={{ fontSize: '15px', color: '#111', fontWeight: 500, lineHeight: 1.7, textAlign: 'left' }}
+          style={{ fontSize: '15px', color: '#111', fontWeight: 500, lineHeight: 1.7, textAlign: 'justify' }}
         >
           {description}
         </p>
@@ -243,7 +243,7 @@ function GatefoldLiner({ item }: InfoPanelProps) {
 const INFO_DESIGNS = {
   'gatefold-liner': GatefoldLiner,
   'studio-master-sheet': StudioMasterSheet,
-  'broadsheet': Broadsheet,
+  'newspaper': Newspaper,
 } satisfies Record<InfoItem['infoDesign'], ComponentType<InfoPanelProps>>;
 
 export default function InfoPanel(props: InfoPanelProps) {

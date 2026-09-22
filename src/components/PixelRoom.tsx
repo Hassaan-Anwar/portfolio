@@ -7,6 +7,7 @@ import VinylRecord from './VinylRecord';
 import { useMusicStore } from '@/store/musicStore';
 import { PROJECTS } from '@/data/projects';
 import { EXPERIENCES } from '@/data/experience';
+import { FEATURED, ABOUT } from '@/data/info';
 import Crate from './Crate';
 import CosmicRainCanvas from './CosmicRainCanvas';
 import { Disc3, ChevronLeft } from 'lucide-react';
@@ -400,7 +401,7 @@ export default function PixelRoom() {
                                     onPlay: () => useMusicStore.getState().setCurrentAbout(0),
                                     content: (
                                         <VinylRecord
-                                            color="#D97706" accentGlow="rgba(217,119,6,0.6)" shortTitle="DEV" coverFont="font-album-2" label="HI" title="Hassan (Me)"
+                                            color={ABOUT[0].color} accentGlow={ABOUT[0].accentGlow} shortTitle={ABOUT[0].shortTitle} coverFont={ABOUT[0].coverFont} label={ABOUT[0].vinylLabel} title={ABOUT[0].title}
                                             isActive={activeSection === 'about'} isPlaying={activeSection === 'about' && isPlaying}
                                         />
                                     )
@@ -411,12 +412,12 @@ export default function PixelRoom() {
                         {/* FEATURED PROJECTS CRATE */}
                         <Crate
                             title="FEATURED PROJECTS"
-                            items={[0, 1, 2].map((i) => ({
+                            items={FEATURED.map((feat, i) => ({
                                 id: `bs-${i}`,
                                 onPlay: () => useMusicStore.getState().setCurrentBestsellers(i),
                                 content: (
                                     <VinylRecord
-                                        color="#FBBF24" accentGlow="rgba(251,191,36,0.6)" shortTitle={`HOT-${i+1}`} coverFont="font-album-5" label={`BS${i}`} title={`Top Hit ${i + 1}`}
+                                        color={feat.color} accentGlow={feat.accentGlow} shortTitle={feat.shortTitle} coverFont={feat.coverFont} label={feat.vinylLabel} title={feat.title}
                                         isActive={activeSection === 'bestsellers' && currentBestsellersIndex === i}
                                         isPlaying={activeSection === 'bestsellers' && currentBestsellersIndex === i && isPlaying}
                                     />
@@ -452,7 +453,7 @@ export default function PixelRoom() {
                                     onPlay: () => useMusicStore.getState().setCurrentProject(i),
                                     content: (
                                         <VinylRecord
-                                            color="#B48EFF" accentGlow="rgba(180,142,255,0.6)" shortTitle={proj.shortTitle} coverFont={proj.coverFont} label={proj.vinylLabel} title={proj.title}
+                                            color={proj.color} accentGlow={proj.accentGlow} shortTitle={proj.shortTitle} coverFont={proj.coverFont} label={proj.vinylLabel} title={proj.title}
                                             isActive={isActive} isPlaying={isActive && isPlaying}
                                         />
                                     )

@@ -15,23 +15,23 @@ interface CrateProps {
     items: CrateItem[];
 }
 
-export default function Crate({ title, items: initialItems }: CrateProps) {
-    const [items, setItems] = useState<CrateItem[]>(initialItems);
+export default function Crate({ title, items }: CrateProps) {
+    const [itemOrder, setItemOrder] = useState(() => items.map(i => i.id));
     const [slidingOutId, setSlidingOutId] = useState<string | number | null>(null);
     const [draggingId, setDraggingId] = useState<string | number | null>(null);
 
     const handleNext = () => {
-        if (items.length <= 1 || slidingOutId !== null) return;
+        if (itemOrder.length <= 1 || slidingOutId !== null) return;
 
-        const frontItem = items[0];
-        setSlidingOutId(frontItem.id);
+        const frontId = itemOrder[0];
+        setSlidingOutId(frontId);
 
         setTimeout(() => {
-            setItems((prev) => {
-                const newItems = [...prev];
-                const shifted = newItems.shift();
-                if (shifted) newItems.push(shifted);
-                return newItems;
+            setItemOrder((prev) => {
+                const newOrder = [...prev];
+                const shifted = newOrder.shift();
+                if (shifted !== undefined) newOrder.push(shifted);
+                return newOrder;
             });
             setSlidingOutId(null);
         }, 400);
@@ -89,7 +89,9 @@ export default function Crate({ title, items: initialItems }: CrateProps) {
                 {/* 3. The actual records */}
                 <div style={{ position: 'absolute', bottom: '15px', left: '10px', width: '160px', height: '160px', zIndex: 10 }}>
                     <AnimatePresence mode="popLayout" initial={false}>
-                        {items.map((item, index) => {
+                        {itemOrder.map((id, index) => {
+                            const item = items.find(i => i.id === id);
+                            if (!item) return null;
 
                             const isSlidingOut = item.id === slidingOutId;
                             const isDragging = item.id === draggingId;

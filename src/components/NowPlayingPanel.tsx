@@ -48,7 +48,7 @@ export default function NowPlayingPanel() {
                 gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
                 height: '100%',
                 width: '100%',
-                
+
                 overflow: 'hidden',
                 position: 'relative'
             }}
@@ -65,32 +65,32 @@ export default function NowPlayingPanel() {
             >
                 {/* Realistic Turntable Base (Plinth) */}
                 <div style={{
-                        position: 'relative',
-                        width: '360px',
-                        height: '380px',
-                        borderRadius: '32px',
-                        background: 'linear-gradient(135deg, #2a2438 0%, #171322 100%)',
-                        border: '1px solid #302C44',
-                        boxShadow: `0 24px 48px rgba(0,0,0,0.7), inset 0 2px 4px rgba(255,255,255,0.05), inset 0 -2px 6px rgba(0,0,0,0.5), 0 0 60px ${accentGlow}15`,
-                        transition: 'box-shadow 0.6s ease',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
+                    position: 'relative',
+                    width: '360px',
+                    height: '380px',
+                    borderRadius: '32px',
+                    background: 'linear-gradient(135deg, #2a2438 0%, #171322 100%)',
+                    border: '1px solid #302C44',
+                    boxShadow: `0 24px 48px rgba(0,0,0,0.7), inset 0 2px 4px rgba(255,255,255,0.05), inset 0 -2px 6px rgba(0,0,0,0.5), 0 0 60px ${accentGlow}15`,
+                    transition: 'box-shadow 0.6s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
                 >
                     {/* Sleeping Cat resting on top ledge of record player */}
-                    <img 
-                        src="/calico_sleep.gif" 
-                        alt="Sleeping Cat" 
-                        style={{ 
-                            position: 'absolute', 
-                            top: '-48px', 
-                            left: '32px', 
-                            width: '64px', 
-                            height: 'auto', 
-                            zIndex: 20, 
-                            imageRendering: 'pixelated' 
-                        }} 
+                    <img
+                        src="/calico_sleep.gif"
+                        alt="Sleeping Cat"
+                        style={{
+                            position: 'absolute',
+                            top: '-48px',
+                            left: '32px',
+                            width: '64px',
+                            height: 'auto',
+                            zIndex: 20,
+                            imageRendering: 'pixelated'
+                        }}
                     />
 
                     {/* Metallic Platter */}
@@ -160,8 +160,8 @@ export default function NowPlayingPanel() {
                                         boxShadow: `0 0 20px ${accentGlow}`, zIndex: 2,
                                     }}
                                 >
-                                    
-                                    
+
+
                                 </div>
 
                                 {/* Spindle Hole */}
@@ -231,7 +231,7 @@ export default function NowPlayingPanel() {
 
                     {/* Pixel Cat Sticker */}
                     <img src="/pixel_cat.gif" alt="Pixel Cat" style={{ position: 'absolute', bottom: '12px', right: '24px', width: '48px', height: '48px', opacity: 0.9, zIndex: 10, imageRendering: 'pixelated' }} />
-                    
+
                     {/* Decorative Base Buttons */}
                     <div style={{ position: 'absolute', bottom: '24px', left: '32px', display: 'flex', gap: '12px' }}>
                         <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
@@ -239,69 +239,68 @@ export default function NowPlayingPanel() {
                     </div>
                 </div>
 
-                    {/* ─── INTEGRATED PLAYER BAR ─── */}
-                    <div
-                        className="bg-black/30 backdrop-blur-md border-t border-white/10"
-                        style={{
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            height: '64px',
-                            padding: '0 24px',
-                            display: 'grid',
-                            gridTemplateColumns: '1fr auto 1fr',
-                            alignItems: 'center',
-                            zIndex: 10,
-                        }}
-                    >
-                        {/* 1. Track info (Left) */}
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={title}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 10 }}
-                                transition={{ duration: 0.2 }}
-                                style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}
-                            >
-                                <div style={{ width: '36px', height: '36px', borderRadius: '6px', flexShrink: 0, background: `linear-gradient(135deg, ${color}66, #1B1229)`, border: `1px solid ${color}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
-                                    <span className={item.coverFont}>{item.shortTitle}</span>
-                                </div>
-                                <div style={{ minWidth: 0 }}>
-                                    <p style={{ fontSize: '12px', fontWeight: 700, color: '#F4F1EA', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</p>
-                                    <p className="font-mono" style={{ fontSize: '10px', color: '#9b93ae', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{subtitle}</p>
-                                </div>
-                            </motion.div>
-                        </AnimatePresence>
+                {/* ─── INTEGRATED PLAYER BAR ─── */}
+                <div
+                    className="bg-black/30 backdrop-blur-md border-t border-white/10"
+                    style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '64px',
+                        padding: '0 24px',
+                        display: 'grid',
+                        gridTemplateColumns: '1fr auto 1fr',
+                        alignItems: 'center',
+                        zIndex: 10,
+                    }}
+                >
+                    {/* 1. Track info (Left) */}
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={title}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 10 }}
+                            transition={{ duration: 0.2 }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}
+                        >
+                            <div style={{ width: '36px', height: '36px', borderRadius: '6px', flexShrink: 0, background: `linear-gradient(135deg, ${color}66, #1B1229)`, border: `1px solid ${color}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
+                                <span className={item.coverFont}>{item.shortTitle}</span>
+                            </div>
+                            <div style={{ minWidth: 0 }}>
+                                <p style={{ fontSize: '12px', fontWeight: 700, color: '#F4F1EA', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</p>
+                                <p className="font-mono" style={{ fontSize: '10px', color: '#9b93ae', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{subtitle}</p>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
 
-                        {/* 2. Controls (Centered) */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'center' }}>
-                            <button onClick={prev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipBack size={18} /></button>
-                            
-                            <button onClick={togglePlay} style={{ background: color, border: 'none', cursor: 'pointer', color: '#0d0a14', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'transform 0.15s' }} onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.08)')} onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}>
-                                {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
-                            </button>
-                            
-                            <button onClick={next} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipForward size={18} /></button>
-                        </div>
+                    {/* 2. Controls (Centered) */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'center' }}>
+                        <button onClick={prev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipBack size={18} /></button>
 
-                        {/* 3. Visualizer (Right) */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '2px', height: '28px', justifyContent: 'flex-end', opacity: isPlaying ? 1 : 0.4 }}>
-                            {Array.from({ length: 18 }).map((_, i) => (
-                                <div key={i} style={{ width: '3px', background: color, borderRadius: '2px', height: isPlaying ? `${6 + (i % 7) * 3}px` : '3px', transition: 'height 0.4s ease', animation: isPlaying ? `waveBar ${0.55 + (i % 5) * 0.15}s ease-in-out ${i * 0.04}s infinite alternate` : 'none' }} />
-                            ))}
-                        </div>
+                        <button onClick={togglePlay} style={{ background: color, border: 'none', cursor: 'pointer', color: '#0d0a14', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'transform 0.15s' }} onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.08)')} onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}>
+                            {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
+                        </button>
+
+                        <button onClick={next} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipForward size={18} /></button>
                     </div>
+
+                    {/* 3. Visualizer (Right) */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', height: '28px', justifyContent: 'flex-end', opacity: isPlaying ? 1 : 0.4 }}>
+                        {Array.from({ length: 18 }).map((_, i) => (
+                            <div key={i} style={{ width: '3px', background: color, borderRadius: '2px', height: isPlaying ? `${6 + (i % 7) * 3}px` : '3px', transition: 'height 0.4s ease', animation: isPlaying ? `waveBar ${0.55 + (i % 5) * 0.15}s ease-in-out ${i * 0.04}s infinite alternate` : 'none' }} />
+                        ))}
+                    </div>
+                </div>
             </div>
 
             {/* ── RIGHT HALF: Selectable information treatment ── */}
             <div
                 style={{
-                    overflowY: 'auto',
-                    padding: '28px clamp(20px, 4vw, 48px)',
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: '#302C44 transparent'
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
                 }}
             >
                 <AnimatePresence mode="wait">
@@ -311,7 +310,7 @@ export default function NowPlayingPanel() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        style={{ minWidth: 0, height: '100%' }}
+                        style={{ minWidth: 0, flex: 1, height: '100%', display: 'flex', flexDirection: 'column' }}
                     >
                         <InfoPanel item={item} />
                     </motion.div>

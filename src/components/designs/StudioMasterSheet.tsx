@@ -6,6 +6,20 @@ interface InfoPanelProps {
     item: InfoItem;
 }
 
+function parseHighlights(text: string) {
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+            return (
+                <span key={i} style={{ color: '#ffffff', fontWeight: 600 }}>
+                    {part.slice(2, -2)}
+                </span>
+            );
+        }
+        return <span key={i}>{part}</span>;
+    });
+}
+
 export default function StudioMasterSheet({ item }: InfoPanelProps) {
     const title = 'title' in item ? item.title : item.company;
     const subtitle = 'subtitle' in item ? item.subtitle : item.role;
@@ -13,18 +27,29 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
     const skills = 'techStack' in item ? item.techStack : item.skills;
     const isProject = 'techStack' in item;
 
-    const description = item.longDescription || item.description;
+    const rawDesc = item.longDescription || item.description;
     const color = item.color || '#FBBF24';
 
-    // Real URLs — controls the href only, never the visual state
-    const githubHref = isProject && item.githubUrl && item.githubUrl !== '#' ? item.githubUrl : undefined;
-    const liveHref = isProject && item.liveUrl && item.liveUrl !== '#' ? item.liveUrl : undefined;
+    // Real URLs — works for both Project and SupplementalInfoItem (Featured)
+    const rawGithub = 'githubUrl' in item ? (item as any).githubUrl : undefined;
+    const rawLive = 'liveUrl' in item ? (item as any).liveUrl : undefined;
+    const githubHref = rawGithub && rawGithub !== '#' ? rawGithub : undefined;
+    const liveHref = rawLive && rawLive !== '#' ? rawLive : undefined;
 
-    // Split description into paired-sentence log chunks
-    const sentences = description.match(/[^.!?]+[.!?]+/g) ?? [description];
-    const logs: string[] = [];
-    for (let i = 0; i < sentences.length; i += 2) {
-        logs.push([sentences[i], sentences[i + 1]].filter(Boolean).join(' ').trim());
+    let logs: string[] = [];
+    if (Array.isArray(rawDesc)) {
+        // If it's already an array of carefully constructed paragraphs, use it directly
+        logs = rawDesc;
+    } else {
+        // If it's a string, try splitting by newline, else fall back to paired sentences
+        if (rawDesc.includes('\n')) {
+            logs = rawDesc.split('\n').map(s => s.trim()).filter(Boolean);
+        } else {
+            const sentences = rawDesc.match(/[^.!?]+[.!?]+/g) ?? [rawDesc];
+            for (let i = 0; i < sentences.length; i += 2) {
+                logs.push([sentences[i], sentences[i + 1]].filter(Boolean).join(' ').trim());
+            }
+        }
     }
 
     return (
@@ -109,8 +134,8 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                 </div>
 
                 {/* Log entries */}
-                <div className="flex-1 overflow-y-auto min-h-0 flex flex-col gap-4 pt-1"
-                    style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.07) transparent', paddingLeft: '24px' }}>
+                <div className="flex-1 overflow-y-auto min-h-0 flex flex-col pt-1 pb-4"
+                    style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.07) transparent', paddingLeft: '24px', paddingRight: '24px', gap: '32px' }}>
                     {logs.map((log, i) => (
                         <div key={i} className="flex gap-3">
                             <span style={{ color: '#52525b', flexShrink: 0, fontSize: '13px', marginTop: '2px' }}>-</span>
@@ -118,7 +143,7 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                                 <span style={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.12em', fontSize: '11px' }}>
                                     LOG {String(i + 1).padStart(2, '0')}:{' '}
                                 </span>
-                                <span style={{ color: '#a1a1aa' }}>{log}</span>
+                                <span style={{ color: '#a1a1aa' }}>{parseHighlights(log)}</span>
                             </div>
                         </div>
                     ))}
@@ -153,164 +178,95 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                     minHeight: '76px',
                 }}>
 
-                {/* REPO ACCESS — fader + github LED */}
-                <div className="flex-1 flex flex-row items-center justify-center gap-5 px-5">
-
-                    {/* Fader assembly */}
-                    <div className="relative flex items-center justify-center shrink-0"
-                        style={{ width: '40px', height: '52px' }}>
-                        {/* Recessed track */}
-                        <div className="absolute left-1/2 -translate-x-1/2 rounded-full"
-                            style={{ width: '6px', height: '100%', background: '#000', boxShadow: 'inset 0 2px 6px rgba(0,0,0,1)' }} />
-                        {/* Tick marks left side */}
-                        <div className="absolute flex flex-col justify-between py-1"
-                            style={{ left: '4px', top: 0, height: '100%' }}>
-                            {[...Array(5)].map((_, idx) => (
-                                <div key={idx} style={{ width: '4px', height: '1px', background: 'rgba(255,255,255,0.25)' }} />
-                            ))}
+                {/* REPO ACCESS — conditionally rendered if githubHref exists */}
+                {githubHref ? (
+                    <a
+                        href={githubHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex flex-row items-center justify-center gap-5 px-5"
+                        style={{ textDecoration: 'none', cursor: 'pointer' }}
+                    >
+                        {/* Fader assembly */}
+                        <div className="relative flex items-center justify-center shrink-0" style={{ width: '40px', height: '52px' }}>
+                            {/* Recessed track */}
+                            <div className="absolute left-1/2 -translate-x-1/2 rounded-full"
+                                style={{ width: '6px', height: '100%', background: '#000', boxShadow: 'inset 0 2px 6px rgba(0,0,0,1)' }} />
+                            {/* Tick marks left side */}
+                            <div className="absolute flex flex-col justify-between py-1" style={{ left: '4px', top: 0, height: '100%' }}>
+                                {[...Array(5)].map((_, idx) => (
+                                    <div key={idx} style={{ width: '4px', height: '1px', background: 'rgba(255,255,255,0.25)' }} />
+                                ))}
+                            </div>
+                            {/* Animated fader knob — pointer-events-none since the whole wrapper is the button now */}
+                            <motion.div
+                                className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-[3px] rounded-sm pointer-events-none"
+                                style={{
+                                    width: '28px', height: '14px', background: 'linear-gradient(to bottom, #666, #252525)',
+                                    boxShadow: '0 4px 10px rgba(0,0,0,0.8), inset 0 1px rgba(255,255,255,0.22)', border: '1px solid #000', zIndex: 10
+                                }}
+                                initial={{ top: '65%' }} animate={{ top: '10%' }} transition={{ duration: 0.7, ease: 'easeOut', delay: 0.3 }}
+                            >
+                                <div style={{ width: '14px', height: '1px', background: 'rgba(0,0,0,0.6)' }} />
+                                <div style={{ width: '14px', height: '1px', background: 'rgba(255,255,255,0.22)' }} />
+                                <div style={{ width: '14px', height: '1px', background: 'rgba(0,0,0,0.6)' }} />
+                            </motion.div>
                         </div>
-                        {/* Animated fader knob — always goes to top (visual only) */}
+
+                        {/* Label + amber LED link */}
+                        <div className="flex flex-col gap-2">
+                            <span style={{ fontSize: '11px', letterSpacing: '0.12em', color: '#ffffff', fontWeight: 700 }}>
+                                REPO ACCESS
+                            </span>
+                            <span style={{ fontSize: '11px', letterSpacing: '0.1em', fontWeight: 700, color: '#d4d4d8', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                [&nbsp;
+                                <span style={{ display: 'inline-block', width: '9px', height: '9px', borderRadius: '50%', background: '#FBBF24', boxShadow: '0 0 10px rgba(251,191,36,0.9), 0 0 4px rgba(251,191,36,0.6)', flexShrink: 0 }} />
+                                &nbsp;GITHUB ]
+                            </span>
+                        </div>
+                    </a>
+                ) : (
+                    <div className="flex-1" />
+                )}
+
+                {/* Divider (Only show if both links exist) */}
+                {githubHref && liveHref && (
+                    <div style={{ width: '1px', background: 'rgba(255,255,255,0.07)', alignSelf: 'stretch', margin: '10px 0' }} />
+                )}
+
+                {/* DEMO — always glowing, always ON */}
+                <a
+                    href={liveHref}
+                    target={liveHref ? '_blank' : undefined}
+                    rel="noopener noreferrer"
+                    onClick={!liveHref ? (e) => e.preventDefault() : undefined}
+                    className="flex-1 flex flex-row items-center justify-center gap-5 px-5"
+                    style={{ textDecoration: 'none', cursor: liveHref ? 'pointer' : 'default' }}
+                >
+                    {/* Label + green LED */}
+                    <div className="flex flex-col gap-2">
+                        <span style={{ fontSize: '11px', letterSpacing: '0.12em', color: '#ffffff', fontWeight: 700 }}>
+                            LIVE DEMO
+                        </span>
+                        <span style={{ fontSize: '11px', letterSpacing: '0.1em', fontWeight: 700, color: '#d4d4d8', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            [&nbsp;
+                            <span style={{ display: 'inline-block', width: '9px', height: '9px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 10px rgba(34,197,94,0.9), 0 0 4px rgba(34,197,94,0.6)', flexShrink: 0 }} />
+                            &nbsp;DEMO ]
+                        </span>
+                    </div>
+
+                    {/* Pill toggle */}
+                    <div className="relative flex items-center shrink-0 pointer-events-none"
+                        style={{ width: '56px', height: '28px', background: '#000', borderRadius: '999px', boxShadow: 'inset 0 3px 8px rgba(0,0,0,1)', border: '1px solid rgba(255,255,255,0.05)' }}>
                         <motion.div
-                            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-[3px] rounded-sm cursor-pointer"
-                            style={{
-                                width: '28px',
-                                height: '14px',
-                                background: 'linear-gradient(to bottom, #666, #252525)',
-                                boxShadow: '0 4px 10px rgba(0,0,0,0.8), inset 0 1px rgba(255,255,255,0.22)',
-                                border: '1px solid #000',
-                                zIndex: 10,
-                            }}
-                            initial={{ top: '65%' }}
-                            animate={{ top: '10%' }}
-                            transition={{ duration: 0.7, ease: 'easeOut', delay: 0.3 }}
+                            className="flex items-center justify-center"
+                            style={{ position: 'absolute', width: '22px', height: '22px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 14px rgba(34,197,94,0.8), inset 0 3px 4px rgba(255,255,255,0.4), inset 0 -3px 4px rgba(0,0,0,0.3)' }}
+                            initial={{ left: '3px' }} animate={{ left: '31px' }} transition={{ type: 'spring', stiffness: 400, damping: 25, delay: 0.4 }}
                         >
-                            <div style={{ width: '14px', height: '1px', background: 'rgba(0,0,0,0.6)' }} />
-                            <div style={{ width: '14px', height: '1px', background: 'rgba(255,255,255,0.22)' }} />
-                            <div style={{ width: '14px', height: '1px', background: 'rgba(0,0,0,0.6)' }} />
+                            <div style={{ position: 'absolute', top: '3px', left: '4px', width: '8px', height: '8px', borderRadius: '50%', background: 'rgba(255,255,255,0.35)', filter: 'blur(1px)' }} />
                         </motion.div>
                     </div>
-
-                    {/* Label + amber LED link */}
-                    <div className="flex flex-col gap-2">
-                        <span style={{ fontSize: '11px', letterSpacing: '0.12em', color: '#ffffff', fontWeight: 700 }}>
-                            REPO ACCESS
-                        </span>
-                        <a
-                            href={githubHref}
-                            target={githubHref ? '_blank' : undefined}
-                            rel="noopener noreferrer"
-                            style={{
-                                fontSize: '11px',
-                                letterSpacing: '0.1em',
-                                fontWeight: 700,
-                                color: githubHref ? '#d4d4d8' : '#52525b',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                cursor: githubHref ? 'pointer' : 'default',
-                                textDecoration: 'none',
-                            }}
-                        >
-                            [&nbsp;
-                            {/* Amber LED — always glowing */}
-                            <span style={{
-                                display: 'inline-block',
-                                width: '9px',
-                                height: '9px',
-                                borderRadius: '50%',
-                                background: '#FBBF24',
-                                boxShadow: '0 0 10px rgba(251,191,36,0.9), 0 0 4px rgba(251,191,36,0.6)',
-                                flexShrink: 0,
-                            }} />
-                            &nbsp;GITHUB ]
-                        </a>
-                    </div>
-                </div>
-
-                {/* Divider */}
-                <div style={{ width: '1px', background: 'rgba(255,255,255,0.07)', alignSelf: 'stretch', margin: '10px 0' }} />
-
-                {/* LIVE SITE — label + green LED + pill toggle */}
-                <div className="flex-1 flex flex-row items-center justify-center gap-5 px-5">
-
-                    {/* Label + green LED link */}
-                    <div className="flex flex-col gap-2">
-                        <span style={{ fontSize: '11px', letterSpacing: '0.12em', color: '#ffffff', fontWeight: 700 }}>
-                            LIVE SITE
-                        </span>
-                        <a
-                            href={liveHref}
-                            target={liveHref ? '_blank' : undefined}
-                            rel="noopener noreferrer"
-                            style={{
-                                fontSize: '11px',
-                                letterSpacing: '0.1em',
-                                fontWeight: 700,
-                                color: liveHref ? '#d4d4d8' : '#52525b',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                cursor: liveHref ? 'pointer' : 'default',
-                                textDecoration: 'none',
-                            }}
-                        >
-                            [&nbsp;
-                            {/* Green LED — always glowing */}
-                            <span style={{
-                                display: 'inline-block',
-                                width: '9px',
-                                height: '9px',
-                                borderRadius: '50%',
-                                background: '#22c55e',
-                                boxShadow: '0 0 10px rgba(34,197,94,0.9), 0 0 4px rgba(34,197,94,0.6)',
-                                flexShrink: 0,
-                            }} />
-                            &nbsp;DEMO ]
-                        </a>
-                    </div>
-
-                    {/* Pill toggle — always shown as ON */}
-                    <div className="relative flex items-center shrink-0"
-                        style={{
-                            width: '56px',
-                            height: '28px',
-                            background: '#000',
-                            borderRadius: '999px',
-                            boxShadow: 'inset 0 3px 8px rgba(0,0,0,1)',
-                            border: '1px solid rgba(255,255,255,0.05)',
-                        }}>
-                        <motion.a
-                            href={liveHref}
-                            target={liveHref ? '_blank' : undefined}
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center"
-                            style={{
-                                position: 'absolute',
-                                width: '22px',
-                                height: '22px',
-                                borderRadius: '50%',
-                                background: '#22c55e',
-                                boxShadow: '0 0 14px rgba(34,197,94,0.8), inset 0 3px 4px rgba(255,255,255,0.4), inset 0 -3px 4px rgba(0,0,0,0.3)',
-                                cursor: liveHref ? 'pointer' : 'default',
-                            }}
-                            initial={{ left: '3px' }}
-                            animate={{ left: '31px' }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 25, delay: 0.4 }}
-                        >
-                            {/* Inner highlight bubble */}
-                            <div style={{
-                                position: 'absolute',
-                                top: '3px',
-                                left: '4px',
-                                width: '8px',
-                                height: '8px',
-                                borderRadius: '50%',
-                                background: 'rgba(255,255,255,0.35)',
-                                filter: 'blur(1px)',
-                            }} />
-                        </motion.a>
-                    </div>
-                </div>
+                </a>
             </div>
         </article>
     );

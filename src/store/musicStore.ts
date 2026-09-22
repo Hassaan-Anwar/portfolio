@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import type { InfoPresentation } from '@/data/info';
+import { EXPERIENCES } from '@/data/experience';
+import { PROJECTS } from '@/data/projects';
 
 export type ActiveSection = 'about' | 'bestsellers' | 'projects' | 'experience';
 
@@ -9,12 +11,12 @@ export interface Project extends InfoPresentation {
   subtitle: string;
   year: string;
   description: string;
-  longDescription: string;
+  longDescription: string | string[];
   techStack: string[];
   color: string;
   accentGlow: string;
-  githubUrl: string;
-  liveUrl: string;
+  githubUrl?: string;
+  liveUrl?: string;
   vinylLabel: string;
   shortTitle: string;
   coverFont: string;
@@ -44,10 +46,10 @@ interface MusicStore {
   setDragging: (v: boolean) => void;
 }
 
-const ABOUT_COUNT = 1;
-const BESTSELLERS_COUNT = 3;
-const PROJECT_COUNT = 5;
-const EXPERIENCE_COUNT = 3;
+const ABOUT_COUNT = 1;         // ABOUT array always has 1 entry
+const BESTSELLERS_COUNT = 2;   // FEATURED consists of MelodyMind and MLOps Ad Gen
+const PROJECT_COUNT = PROJECTS.length;
+const EXPERIENCE_COUNT = EXPERIENCES.length;
 
 export const useMusicStore = create<MusicStore>((set, get) => ({
   activeSection: 'about',

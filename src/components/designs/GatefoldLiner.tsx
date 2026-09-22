@@ -1,5 +1,20 @@
 import { motion } from 'framer-motion';
 
+// Helper to handle markdown bolding
+function parseHighlights(text: string) {
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+            return (
+                <span key={i} style={{ color: '#000', fontWeight: 800 }}>
+                    {part.slice(2, -2)}
+                </span>
+            );
+        }
+        return <span key={i}>{part}</span>;
+    });
+}
+
 export default function GatefoldLiner({
     item,
     isProject
@@ -13,7 +28,16 @@ export default function GatefoldLiner({
     const title = item.title || item.company;
     const subtitle = item.subtitle || item.role;
 
-    const description = item.longDescription || item.description;
+    const rawDesc = item.longDescription || item.description;
+    let paragraphs: string[] = [];
+    if (Array.isArray(rawDesc)) {
+        paragraphs = rawDesc;
+    } else if (rawDesc.includes('\n')) {
+        paragraphs = rawDesc.split('\n').map((s: string) => s.trim()).filter(Boolean);
+    } else {
+        paragraphs = [rawDesc];
+    }
+
     const color = item.color || '#333';
 
     // Format Tech Stack into credits
@@ -26,6 +50,13 @@ export default function GatefoldLiner({
         else if (i % 3 === 1) mixed.push(t);
         else mastered.push(t);
     });
+
+    // Check if this is the personal profile to show Portfolio Tech Stack labels
+    const isProfile = item.infoCategory === 'PERSONAL PROFILE';
+    const personnelLabel = isProfile ? 'PORTFOLIO TECH STACK' : 'PERSONNEL & CREDITS';
+    const engineeringLabel = isProfile ? 'FRONTEND:' : 'ENGINEERED & COMPOSED WITH:';
+    const mixingLabel = isProfile ? 'ANIMATION SERVER:' : 'MIXED AT:';
+    const masterLabel = isProfile ? 'DEPLOYED ON:' : 'MASTERED AT:';
 
     return (
         <motion.div
@@ -73,71 +104,21 @@ export default function GatefoldLiner({
             {/* Top Divider */}
             <hr className="w-full border-t border-[rgba(0,0,0,0.8)] opacity-20 mb-6" />
 
-            {/* Central Content Grid Container */}
-            <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 overflow-hidden min-h-0">
-
-                {/* Left: Vintage Photograph Graphic (Col 3) */}
-                <div className="lg:col-span-3 flex flex-col gap-2">
-                    <div
-                        className="w-full relative rounded-sm overflow-hidden flex flex-col justify-center items-center"
-                        style={{
-                            aspectRatio: '16 / 10', // Landscape format
-                            padding: '16px',
-                            background: '#111', // Heavy black film border
-                            boxShadow: '0 12px 32px rgba(0,0,0,0.4)',
-                        }}
-                    >
-                        {/* Film Border artifacts */}
-                        <div className="absolute top-2 left-4 text-[#555] font-mono text-[7px]">OPALUX FILM-1305</div>
-                        <div className="absolute top-2 right-4 text-[#555] font-mono text-[7px]">48</div>
-
-                        <div className="absolute bottom-2 left-4 flex gap-1.5">
-                            {[1, 2, 3, 4, 5].map(i => <div key={i} className="w-2.5 h-1.5 bg-[#222]" />)}
-                        </div>
-
-                        {/* Internal image/preview window */}
-                        <div
-                            className="w-full h-full relative"
-                            style={{
-                                background: `radial-gradient(circle at 50% 50%, ${color}33, #0a0a0c)`,
-                                border: `1px solid ${color}40`,
-                                overflow: 'hidden'
-                            }}
-                        >
-                            {/* Graphic inside photo */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <span className={item.coverFont} style={{ fontSize: '64px', color: '#fff', opacity: 0.9, textShadow: `0 4px 16px ${color}` }}>
-                                    {item.shortTitle}
-                                </span>
-                            </div>
-
-                            {/* CRT/Scanline internal overlay */}
-                            <div className="absolute inset-0 pointer-events-none" style={{
-                                backgroundImage: `linear-gradient(transparent 50%, rgba(0,0,0,0.3) 50%)`,
-                                backgroundSize: '100% 4px',
-                            }} />
-                        </div>
-                    </div>
-                    {/* Tiny caption under photograph */}
-                    <div className="text-center font-mono uppercase mt-1" style={{ fontSize: '8px', color: '#555', letterSpacing: 1, fontWeight: 'bold' }}>
-                        {'imageCaption' in item ? item.imageCaption : `FIG 1.0 — ${title}`}
-                    </div>
-                </div>
-
-                {/* Right: Editorial Body Copy (Col 9) */}
-                <div className="lg:col-span-9 flex flex-col h-full overflow-y-auto pr-4" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.2) transparent' }}>
-                    <div
-                        className="font-sans leading-relaxed"
-                        style={{
-                            fontSize: '16px',
-                            color: '#111',
-                            fontWeight: 500,
-                            lineHeight: 1.6,
-                            textAlign: 'left' // Explicitly left align instead of justify for cleaner reading
-                        }}
-                    >
-                        {description}
-                    </div>
+            {/* Central Content Container - Full Width Body Copy */}
+            <div className="flex-1 w-full flex flex-col h-full overflow-y-auto pr-4" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.2) transparent' }}>
+                <div
+                    className="flex flex-col gap-5 font-sans leading-relaxed pb-4"
+                    style={{
+                        fontSize: '16px',
+                        color: '#2a2a2b',
+                        fontWeight: 500,
+                        lineHeight: 1.6,
+                        textAlign: 'left'
+                    }}
+                >
+                    {paragraphs.map((p, idx) => (
+                        <p key={idx}>{parseHighlights(p)}</p>
+                    ))}
                 </div>
             </div>
 
@@ -148,61 +129,65 @@ export default function GatefoldLiner({
             <div className="w-full flex flex-row justify-between items-end relative pb-2">
 
                 <div className="font-mono uppercase leading-relaxed flex-1 tracking-widest text-black" style={{ fontSize: '11px', maxWidth: '65%' }}>
-                    <span className="font-extrabold mr-2">PERSONNEL & CREDITS</span> |
-                    {engineered.length > 0 && <span className="text-[#333]"> <strong className="text-black">ENGINEERED & COMPOSED WITH:</strong> {engineered.join(', ')} |</span>}
-                    {mixed.length > 0 && <span className="text-[#333]"> <strong className="text-black">MIXED AT:</strong> {mixed.join(', ')} |</span>}
-                    {mastered.length > 0 && <span className="text-[#333]"> <strong className="text-black">MASTERED AT:</strong> {mastered.join(', ')}</span>}
+                    <span className="font-extrabold mr-2">{personnelLabel}</span> |
+                    {engineered.length > 0 && <span className="text-[#333]"> <strong className="text-black">{engineeringLabel}</strong> {engineered.join(', ')} |</span>}
+                    {mixed.length > 0 && <span className="text-[#333]"> <strong className="text-black">{mixingLabel}</strong> {mixed.join(', ')} |</span>}
+                    {mastered.length > 0 && <span className="text-[#333]"> <strong className="text-black">{masterLabel}</strong> {mastered.join(', ')}</span>}
                 </div>
 
                 {/* Peelable Promo Stickers */}
                 <div className="flex flex-row gap-3 absolute bottom-0 right-0 z-10" style={{ transform: 'translateY(16px)' }}>
                     {/* View Source Code Button (Red hype sticker) */}
-                    <motion.a
-                        href={item.githubUrl || '#'}
-                        target="_blank"
-                        whileHover={{ scale: 1.05, rotate: -4 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="font-bold flex items-center justify-center text-center cursor-pointer pointer-events-auto shadow-2xl"
-                        style={{
-                            background: '#d94132', // bright sticker red
-                            color: '#fff',
-                            width: '110px',
-                            height: '46px',
-                            borderRadius: '4px',
-                            transform: 'rotate(-3deg)',
-                            fontSize: '12px',
-                            lineHeight: 1.1,
-                            borderTop: '2px solid rgba(255,255,255,0.3)',
-                            borderLeft: '1px solid rgba(255,255,255,0.3)',
-                            textTransform: 'uppercase',
-                        }}
-                    >
-                        VIEW<br />SOURCE CODE
-                    </motion.a>
+                    {item.githubUrl && (
+                        <motion.a
+                            href={item.githubUrl}
+                            target="_blank"
+                            whileHover={{ scale: 1.05, rotate: -4 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="font-bold flex items-center justify-center text-center cursor-pointer pointer-events-auto shadow-2xl"
+                            style={{
+                                background: '#d94132', // bright sticker red
+                                color: '#fff',
+                                width: '110px',
+                                height: '46px',
+                                borderRadius: '4px',
+                                transform: 'rotate(-3deg)',
+                                fontSize: '12px',
+                                lineHeight: 1.1,
+                                borderTop: '2px solid rgba(255,255,255,0.3)',
+                                borderLeft: '1px solid rgba(255,255,255,0.3)',
+                                textTransform: 'uppercase',
+                            }}
+                        >
+                            VIEW<br />SOURCE CODE
+                        </motion.a>
+                    )}
 
                     {/* Demo Available Button (Green hype sticker) */}
-                    <motion.a
-                        href={item.liveUrl || '#'}
-                        target="_blank"
-                        whileHover={{ scale: 1.05, rotate: 2 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="font-bold flex items-center justify-center text-center cursor-pointer pointer-events-auto shadow-2xl"
-                        style={{
-                            background: '#47b561', // bright sticker green
-                            color: '#fff',
-                            width: '110px',
-                            height: '46px',
-                            borderRadius: '4px',
-                            transform: 'rotate(2deg)',
-                            fontSize: '12px',
-                            lineHeight: 1.1,
-                            borderTop: '2px solid rgba(255,255,255,0.3)',
-                            borderLeft: '1px solid rgba(255,255,255,0.3)',
-                            textTransform: 'uppercase',
-                        }}
-                    >
-                        DEMO<br />AVAILABLE
-                    </motion.a>
+                    {item.liveUrl && (
+                        <motion.a
+                            href={item.liveUrl}
+                            target="_blank"
+                            whileHover={{ scale: 1.05, rotate: 2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="font-bold flex items-center justify-center text-center cursor-pointer pointer-events-auto shadow-2xl"
+                            style={{
+                                background: '#47b561', // bright sticker green
+                                color: '#fff',
+                                width: '110px',
+                                height: '46px',
+                                borderRadius: '4px',
+                                transform: 'rotate(2deg)',
+                                fontSize: '12px',
+                                lineHeight: 1.1,
+                                borderTop: '2px solid rgba(255,255,255,0.3)',
+                                borderLeft: '1px solid rgba(255,255,255,0.3)',
+                                textTransform: 'uppercase',
+                            }}
+                        >
+                            DEMO<br />AVAILABLE
+                        </motion.a>
+                    )}
                 </div>
             </div>
 

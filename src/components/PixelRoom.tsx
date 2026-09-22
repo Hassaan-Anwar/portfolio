@@ -293,20 +293,12 @@ function PeekDrawer({ children, accentColor, isOpen, setIsOpen }: { children: Re
 export default function PixelRoom() {
     const {
         activeSection, currentProjectIndex, currentExperienceIndex, currentBestsellersIndex,
-        isPlaying, setCurrentProject, setCurrentExperience,
+        isPlaying, setCurrentProject, setCurrentExperience, activeColor, activeGlow,
     } = useMusicStore();
-
-    let activeItemTitle;
-    let activeColor = '#302C44';
-    let activeGlow = 'rgba(48,44,68,0.5)';
-
-    if (activeSection === 'about') { activeColor = '#D97706'; activeGlow = 'rgba(217,119,6,0.6)'; }
-    else if (activeSection === 'bestsellers') { activeColor = '#FBBF24'; activeGlow = 'rgba(251,191,36,0.6)'; }
-    else if (activeSection === 'experience') { activeColor = '#2DD4BF'; activeGlow = 'rgba(45,212,191,0.6)'; }
-    else if (activeSection === 'projects') { activeColor = '#B48EFF'; activeGlow = 'rgba(180,142,255,0.6)'; }
 
     const isProject = activeSection === 'projects';
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     const CATS = [
         { x: 12, y: 18, scale: 1, phase: 0, rotateDir: 1 },
@@ -333,25 +325,25 @@ export default function PixelRoom() {
             <header
                 className="bg-black/30 backdrop-blur-md border-b border-white/10"
                 style={{
-                    display: 'flex',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr auto 1fr',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
                     width: '100%',
-                    padding: '16px 40px',
+                    padding: '10px 32px',
                     position: 'sticky',
                     top: 0,
                     zIndex: 60,
                     flexShrink: 0
                 }}
             >
-
-                {/* Left: Now Playing Status */}
+                {/* ── LEFT: Now Playing Status ── */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <motion.div
                         style={{
                             width: '8px', height: '8px', borderRadius: '50%',
                             background: isPlaying ? activeColor : '#302C44',
                             boxShadow: isPlaying ? `0 0 8px ${activeGlow}` : 'none',
+                            flexShrink: 0,
                         }}
                         animate={isPlaying ? { scale: [1, 1.4, 1] } : {}}
                         transition={{ duration: 1, repeat: Infinity }}
@@ -366,22 +358,90 @@ export default function PixelRoom() {
                     </div>
                 </div>
 
-                {/* Right: DEV.LAIR & Navigation */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
-                    <div>
-                        <p className="font-pixel" style={{ fontSize: '6px', color: '#634B7D', letterSpacing: '4px', textAlign: 'right' }}>WELCOME TO MY</p>
-                        <h1
-                            className="font-pixel leading-tight"
-                            style={{ fontSize: '20px', color: '#F4F1EA', textShadow: `0 0 28px ${activeColor}80`, transition: 'text-shadow 0.7s' }}
-                        >
-                            DEV.LAIR
-                        </h1>
-                    </div>
-                    <nav style={{ display: 'flex', gap: '32px' }}>
-                        {['ABOUT', 'CONTACT'].map(l => (
-                            <a key={l} href="#" className="font-pixel hover:text-white transition-colors" style={{ fontSize: '7px', color: '#9b93ae', letterSpacing: '2px' }}>{l}</a>
-                        ))}
-                    </nav>
+                {/* ── CENTER: Identity ── */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                    <span
+                        className="font-pixel tracking-widest"
+                        style={{ fontSize: '13px', color: '#F4F1EA', letterSpacing: '0.18em' }}
+                    >
+                        HASSAAN ANWAR
+                    </span>
+                    <span
+                        className="font-pixel tracking-widest"
+                        style={{ fontSize: '7px', color: '#9b93ae', letterSpacing: '0.22em' }}
+                    >
+                        SOFTWARE ENGINEER
+                    </span>
+                </div>
+
+                {/* ── RIGHT: Contact Links ── */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end' }}>
+                    {/* GitHub */}
+                    <a href="https://github.com/Hassaan-Anwar" target="_blank" rel="noopener noreferrer"
+                        style={{ color: '#9b93ae', transition: 'color 0.2s' }}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
+                        onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                        </svg>
+                    </a>
+
+                    {/* LinkedIn */}
+                    <a href="https://www.linkedin.com/in/hassaan-anwar2/" target="_blank" rel="noopener noreferrer"
+                        style={{ color: '#9b93ae', transition: 'color 0.2s' }}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
+                        onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                        </svg>
+                    </a>
+
+                    {/* Email */}
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=hassaan.anwar20052@gmail.com"
+                        target="_blank" rel="noopener noreferrer"
+                        style={{ color: '#9b93ae', transition: 'color 0.2s' }}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
+                        onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                        </svg>
+                    </a>
+
+                    {/* Phone pill / Copy Button */}
+                    <button
+                        onClick={() => {
+                            if (copied) return;
+                            navigator.clipboard.writeText('+92 300-5356465');
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                        }}
+                        className="font-pixel cursor-pointer"
+                        onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
+                        onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}
+                        style={{
+                            color: '#9b93ae',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            padding: '0',
+                            transition: 'color 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minWidth: copied ? '40px' : '18px'
+                        }}
+                        title="Copy Phone Number"
+                    >
+                        {copied ? (
+                            <span style={{ fontSize: '7px', letterSpacing: '2px', paddingTop: '2px' }}>COPIED</span>
+                        ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                            </svg>
+                        )}
+                    </button>
                 </div>
             </header>
 

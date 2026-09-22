@@ -106,21 +106,30 @@ export default function Newspaper({ item }: InfoPanelProps) {
                             backgroundColor: '#fff',
                         }}
                     >
-                        <div
-                            className="w-full h-full flex items-center justify-center"
-                            style={{ background: 'radial-gradient(ellipse at center, #777 0%, #111 80%)' }}
-                        >
-                            <span
-                                className={item.coverFont}
-                                style={{
-                                    fontSize: '30px',
-                                    color: '#fff',
-                                    textShadow: '0 0 10px #000',
-                                }}
+                        {item.imageSrc ? (
+                            <img
+                                src={item.imageSrc}
+                                alt={item.shortTitle}
+                                className="w-full h-full object-cover"
+                                style={{ filter: 'grayscale(100%) contrast(1.2) brightness(0.9)' }}
+                            />
+                        ) : (
+                            <div
+                                className="w-full h-full flex items-center justify-center"
+                                style={{ background: 'radial-gradient(ellipse at center, #777 0%, #111 80%)' }}
                             >
-                                {item.shortTitle}
-                            </span>
-                        </div>
+                                <span
+                                    className={item.coverFont}
+                                    style={{
+                                        fontSize: '30px',
+                                        color: '#fff',
+                                        textShadow: '0 0 10px #000',
+                                    }}
+                                >
+                                    {item.shortTitle}
+                                </span>
+                            </div>
+                        )}
                         {/* Halftone overlay */}
                         <div
                             className="absolute inset-0 pointer-events-none"

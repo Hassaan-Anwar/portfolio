@@ -54,6 +54,7 @@ export interface InfoPresentation {
   infoCategory: string;
   formatLabel?: string;
   imageCaption: string;
+  imageSrc?: string;
   credits: InfoCredits;
   /** Per-design custom fields — only populated when infoDesign === 'album-cover'. */
   albumCoverData?: AlbumCoverData;
@@ -127,6 +128,7 @@ export const FEATURED: SupplementalInfoItem[] = [
     shortTitle: 'MLDY', coverFont: 'font-album-3', vinylLabel: 'MLD',
     infoDesign: 'studio-master-sheet', catalogId: 'FT-01', infoCategory: 'FEATURED RELEASE', formatLabel: 'FULL STACK APP',
     imageCaption: 'STUDIO SESSION: MELODYMIND ARCHITECTURE',
+    imageSrc: '/melodymind.jpg',
     credits: { engineering: ['React Native', 'FastAPI'], orchestration: ['Pinecone', 'Gemini'], masteredAt: 'DEV.LAIR ARCHIVE' },
     githubUrl: 'https://github.com/Hassaan-Anwar/MelodyMind_Backend#melodymind-backend',
   },
@@ -143,6 +145,7 @@ export const FEATURED: SupplementalInfoItem[] = [
     shortTitle: 'MOP', coverFont: 'font-album-5', vinylLabel: 'MLO',
     infoDesign: 'studio-master-sheet', catalogId: 'FT-02', infoCategory: 'FEATURED RELEASE', formatLabel: 'INFRASTRUCTURE',
     imageCaption: 'PROD CLUSTER: AUTO-SCALING PIPELINES',
+    imageSrc: '/e-commerce-ad.jpg',
     credits: { engineering: ['Kubernetes', 'Azure'], orchestration: ['Airflow', 'MLflow'], masteredAt: 'DEV.LAIR ARCHIVE' },
     githubUrl: 'https://github.com/Hassaan-Anwar/e-commerce-ad-generator',
   }

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { InfoPresentation } from '@/data/info';
 import { EXPERIENCES } from '@/data/experience';
 import { PROJECTS } from '@/data/projects';
+import { ABOUT, FEATURED } from '@/data/info';
 
 export type ActiveSection = 'about' | 'bestsellers' | 'projects' | 'experience';
 
@@ -32,6 +33,10 @@ interface MusicStore {
   muted: boolean;
   modalOpen: boolean;
   isDragging: boolean;
+  /** The color of the currently active item — updates on every record change. */
+  activeColor: string;
+  /** The glow rgba of the currently active item. */
+  activeGlow: string;
 
   setCurrentAbout: (index: number) => void;
   setCurrentBestsellers: (index: number) => void;
@@ -46,8 +51,8 @@ interface MusicStore {
   setDragging: (v: boolean) => void;
 }
 
-const ABOUT_COUNT = 1;         // ABOUT array always has 1 entry
-const BESTSELLERS_COUNT = 2;   // FEATURED consists of MelodyMind and MLOps Ad Gen
+const ABOUT_COUNT = 1;
+const BESTSELLERS_COUNT = FEATURED.length;
 const PROJECT_COUNT = PROJECTS.length;
 const EXPERIENCE_COUNT = EXPERIENCES.length;
 
@@ -61,42 +66,68 @@ export const useMusicStore = create<MusicStore>((set, get) => ({
   muted: false,
   modalOpen: false,
   isDragging: false,
+  activeColor: ABOUT[0].color,
+  activeGlow: ABOUT[0].accentGlow,
 
-  setCurrentAbout: (index) =>
-    set({ activeSection: 'about', currentAboutIndex: index, isPlaying: true }),
+  setCurrentAbout: (index) => {
+    const item = ABOUT[index % ABOUT_COUNT];
+    set({ activeSection: 'about', currentAboutIndex: index, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
+  },
 
-  setCurrentBestsellers: (index) =>
-    set({ activeSection: 'bestsellers', currentBestsellersIndex: index, isPlaying: true }),
+  setCurrentBestsellers: (index) => {
+    const item = FEATURED[index % BESTSELLERS_COUNT];
+    set({ activeSection: 'bestsellers', currentBestsellersIndex: index, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
+  },
 
-  setCurrentProject: (index) =>
-    set({ activeSection: 'projects', currentProjectIndex: index, isPlaying: true }),
+  setCurrentProject: (index) => {
+    const item = PROJECTS[index % PROJECT_COUNT];
+    set({ activeSection: 'projects', currentProjectIndex: index, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
+  },
 
-  setCurrentExperience: (index) =>
-    set({ activeSection: 'experience', currentExperienceIndex: index, isPlaying: true }),
+  setCurrentExperience: (index) => {
+    const item = EXPERIENCES[index % EXPERIENCE_COUNT];
+    set({ activeSection: 'experience', currentExperienceIndex: index, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
+  },
 
   next: () => {
     const { activeSection, currentProjectIndex, currentExperienceIndex, currentAboutIndex, currentBestsellersIndex } = get();
     if (activeSection === 'projects') {
-      set({ currentProjectIndex: (currentProjectIndex + 1) % PROJECT_COUNT, isPlaying: true });
+      const newIdx = (currentProjectIndex + 1) % PROJECT_COUNT;
+      const item = PROJECTS[newIdx];
+      set({ currentProjectIndex: newIdx, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
     } else if (activeSection === 'experience') {
-      set({ currentExperienceIndex: (currentExperienceIndex + 1) % EXPERIENCE_COUNT, isPlaying: true });
+      const newIdx = (currentExperienceIndex + 1) % EXPERIENCE_COUNT;
+      const item = EXPERIENCES[newIdx];
+      set({ currentExperienceIndex: newIdx, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
     } else if (activeSection === 'bestsellers') {
-      set({ currentBestsellersIndex: (currentBestsellersIndex + 1) % BESTSELLERS_COUNT, isPlaying: true });
+      const newIdx = (currentBestsellersIndex + 1) % BESTSELLERS_COUNT;
+      const item = FEATURED[newIdx];
+      set({ currentBestsellersIndex: newIdx, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
     } else {
-      set({ currentAboutIndex: (currentAboutIndex + 1) % ABOUT_COUNT, isPlaying: true });
+      const newIdx = (currentAboutIndex + 1) % ABOUT_COUNT;
+      const item = ABOUT[newIdx];
+      set({ currentAboutIndex: newIdx, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
     }
   },
 
   prev: () => {
     const { activeSection, currentProjectIndex, currentExperienceIndex, currentAboutIndex, currentBestsellersIndex } = get();
     if (activeSection === 'projects') {
-      set({ currentProjectIndex: (currentProjectIndex - 1 + PROJECT_COUNT) % PROJECT_COUNT, isPlaying: true });
+      const newIdx = (currentProjectIndex - 1 + PROJECT_COUNT) % PROJECT_COUNT;
+      const item = PROJECTS[newIdx];
+      set({ currentProjectIndex: newIdx, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
     } else if (activeSection === 'experience') {
-      set({ currentExperienceIndex: (currentExperienceIndex - 1 + EXPERIENCE_COUNT) % EXPERIENCE_COUNT, isPlaying: true });
+      const newIdx = (currentExperienceIndex - 1 + EXPERIENCE_COUNT) % EXPERIENCE_COUNT;
+      const item = EXPERIENCES[newIdx];
+      set({ currentExperienceIndex: newIdx, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
     } else if (activeSection === 'bestsellers') {
-      set({ currentBestsellersIndex: (currentBestsellersIndex - 1 + BESTSELLERS_COUNT) % BESTSELLERS_COUNT, isPlaying: true });
+      const newIdx = (currentBestsellersIndex - 1 + BESTSELLERS_COUNT) % BESTSELLERS_COUNT;
+      const item = FEATURED[newIdx];
+      set({ currentBestsellersIndex: newIdx, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
     } else {
-      set({ currentAboutIndex: (currentAboutIndex - 1 + ABOUT_COUNT) % ABOUT_COUNT, isPlaying: true });
+      const newIdx = (currentAboutIndex - 1 + ABOUT_COUNT) % ABOUT_COUNT;
+      const item = ABOUT[newIdx];
+      set({ currentAboutIndex: newIdx, isPlaying: true, activeColor: item.color, activeGlow: item.accentGlow });
     }
   },
 

@@ -92,11 +92,13 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
 
             <div style={{ height: '1px', background: 'rgba(255,255,255,0.07)', margin: '0 24px' }} />
 
-            {/* ── MAIN BODY: CRT monitor (left) + log entries (right) ── */}
-            <div className="flex flex-row flex-1 min-h-0 gap-5 px-6 py-4">
-
-                {/* CRT monitor */}
-                <div className="shrink-0 flex flex-col gap-2" style={{ width: '200px' }}>
+            {/* ── MAIN BODY: CRT monitor floated left, logs wrap around it ── */}
+            <div
+                className="flex-1 min-h-0 overflow-y-auto px-6 py-4"
+                style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.07) transparent', paddingRight: '32px' }}
+            >
+                {/* CRT monitor — floated left so log text wraps around it */}
+                <div className="flex flex-col gap-2" style={{ float: 'left', width: '280px', marginRight: '24px', marginBottom: '12px' }}>
                     {/* Thick outer bezel */}
                     <div className="w-full rounded-xl overflow-hidden"
                         style={{
@@ -107,14 +109,27 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                         }}>
                         {/* Screen */}
                         <div className="relative w-full rounded-md overflow-hidden" style={{ aspectRatio: '4/3', background: '#000' }}>
-                            {/* Glow content */}
-                            <div className="absolute inset-0 flex items-center justify-center"
-                                style={{ background: `radial-gradient(ellipse at center, ${color}3a 0%, #000 72%)` }}>
-                                <span className={item.coverFont}
-                                    style={{ fontSize: '48px', color: '#fff', textShadow: `0 0 18px ${color}, 0 0 5px #fff` }}>
-                                    {item.shortTitle}
-                                </span>
-                            </div>
+                            {/* Glow content / Image */}
+                            {item.imageSrc ? (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <img
+                                        src={item.imageSrc}
+                                        alt={item.shortTitle}
+                                        className="w-full h-full object-cover"
+                                        style={{ filter: 'brightness(0.8) contrast(1.1)' }}
+                                    />
+                                    {/* Subdued radial shadow around edges to retain CRT feel */}
+                                    <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 28px rgba(0,0,0,0.85)' }} />
+                                </div>
+                            ) : (
+                                <div className="absolute inset-0 flex items-center justify-center"
+                                    style={{ background: `radial-gradient(ellipse at center, ${color}3a 0%, #000 72%)` }}>
+                                    <span className={item.coverFont}
+                                        style={{ fontSize: '56px', color: '#fff', textShadow: `0 0 18px ${color}, 0 0 5px #fff` }}>
+                                        {item.shortTitle}
+                                    </span>
+                                </div>
+                            )}
                             {/* CRT scanlines */}
                             <div className="absolute inset-0 pointer-events-none"
                                 style={{
@@ -133,9 +148,8 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                     </div>
                 </div>
 
-                {/* Log entries */}
-                <div className="flex-1 overflow-y-auto min-h-0 flex flex-col pt-1 pb-4"
-                    style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.07) transparent', paddingLeft: '24px', paddingRight: '24px', gap: '32px' }}>
+                {/* Log entries — flow naturally around the floated CRT */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
                     {logs.map((log, i) => (
                         <div key={i} className="flex gap-3">
                             <span style={{ color: '#52525b', flexShrink: 0, fontSize: '13px', marginTop: '2px' }}>-</span>
@@ -148,7 +162,11 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                         </div>
                     ))}
                 </div>
+
+                {/* Clear float */}
+                <div style={{ clear: 'both' }} />
             </div>
+
 
             {/* ── CHANNEL STRIP TABS ── */}
             <div className="px-6 pb-3 flex flex-row flex-wrap gap-2 shrink-0"
@@ -244,16 +262,7 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                     style={{ textDecoration: 'none', cursor: liveHref ? 'pointer' : 'default' }}
                 >
                     {/* Label + green LED */}
-                    <div className="flex flex-col gap-2">
-                        <span style={{ fontSize: '11px', letterSpacing: '0.12em', color: '#ffffff', fontWeight: 700 }}>
-                            LIVE DEMO
-                        </span>
-                        <span style={{ fontSize: '11px', letterSpacing: '0.1em', fontWeight: 700, color: '#d4d4d8', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            [&nbsp;
-                            <span style={{ display: 'inline-block', width: '9px', height: '9px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 10px rgba(34,197,94,0.9), 0 0 4px rgba(34,197,94,0.6)', flexShrink: 0 }} />
-                            &nbsp;DEMO ]
-                        </span>
-                    </div>
+
 
                     {/* Pill toggle */}
                     <div className="relative flex items-center shrink-0 pointer-events-none"

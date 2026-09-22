@@ -97,7 +97,7 @@ export const PROJECTS: Project[] = [
         techStack: ['C++', 'OpenMPI', 'OpenMP', 'METIS Partitioning', 'Bash'],
         color: '#3b82f6',
         accentGlow: 'rgba(59, 130, 246, 0.6)',
-        githubUrl: '#',
+        githubUrl: 'https://github.com/Hassaan-Anwar/PDC_Butterfly',
         infoDesign: 'album-cover', catalogId: 'HPC-001', infoCategory: 'PARALLEL COMPUTING', formatLabel: 'DISTRIBUTED SYSTEMS',
         imageCaption: 'STUDIO SESSION: CLUSTER NODE PROFILING',
         credits: { engineering: ['C++', 'OpenMPI', 'OpenMP'], orchestration: ['METIS GRAPH', 'MPI_SCATTER'], masteredAt: 'COMPUTE CLUSTER' },
@@ -137,7 +137,7 @@ export const PROJECTS: Project[] = [
         techStack: ['Python', 'TensorFlow', 'Scikit-Learn', 'Pandas', 'NumPy', 'TORCS'],
         color: '#10B981',
         accentGlow: 'rgba(16, 185, 129, 0.6)',
-        githubUrl: '#',
+        githubUrl: 'https://github.com/mishalali-A2/TORCS',
         infoDesign: 'album-cover', catalogId: 'ML-003', infoCategory: 'MACHINE LEARNING', formatLabel: 'AUTONOMOUS VEHICLE',
         imageCaption: 'STUDIO SESSION: TORCS TELEMETRY TRAINING',
         credits: { engineering: ['Python', 'NumPy', 'Pandas'], orchestration: ['TensorFlow', 'Scikit-Learn'], masteredAt: 'TORCS SIM' },
@@ -164,7 +164,7 @@ export const PROJECTS: Project[] = [
     },
     {
         id: 4,
-        title: 'Library Management System',
+        title: 'Library Manager System',
         subtitle: 'Python Flask Application',
         year: '2023',
         description:
@@ -177,7 +177,7 @@ export const PROJECTS: Project[] = [
         techStack: ['Python', 'Flask', 'Pytest', 'SQLite', 'Agile', 'Git'],
         color: '#FBBF24', // Amber/Gold
         accentGlow: 'rgba(251, 191, 36, 0.6)',
-        githubUrl: '#',
+        githubUrl: 'https://github.com/Hassaan-Anwar/SE_Project',
         infoDesign: 'album-cover', catalogId: 'SWE-001', infoCategory: 'SOFTWARE ENGINEERING', formatLabel: 'FULL-STACK APPLICATION',
         imageCaption: 'STUDIO SESSION: AGILE SPRINT TESTING',
         credits: { engineering: ['Python', 'Flask', 'SQLite'], orchestration: ['Pytest', 'Git', 'Agile'], masteredAt: 'LOCAL DEV' },

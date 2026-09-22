@@ -20,22 +20,17 @@ const DISC_BG = `radial-gradient(circle,
 )`;
 
 export default function NowPlayingPanel() {
-    const { activeSection, currentAboutIndex, currentBestsellersIndex, currentProjectIndex, currentExperienceIndex, isPlaying, isDragging, next, prev, togglePlay } =
+    const { activeSection, currentAboutIndex, currentBestsellersIndex, currentProjectIndex, currentExperienceIndex, isPlaying, isDragging, next, prev, togglePlay, activeColor, activeGlow } =
         useMusicStore();
-
     const item = getActiveInfoItem(activeSection, {
         about: currentAboutIndex,
         bestsellers: currentBestsellersIndex,
         projects: currentProjectIndex,
         experience: currentExperienceIndex,
     });
-    let color = '#302C44';
-    let accentGlow = 'rgba(48,44,68,0.5)';
-    if (activeSection === 'about') { color = '#D97706'; accentGlow = 'rgba(217,119,6,0.6)'; }
-    else if (activeSection === 'bestsellers') { color = '#FBBF24'; accentGlow = 'rgba(251,191,36,0.6)'; }
-    else if (activeSection === 'experience') { color = '#2DD4BF'; accentGlow = 'rgba(45,212,191,0.6)'; }
-    else if (activeSection === 'projects') { color = '#B48EFF'; accentGlow = 'rgba(180,142,255,0.6)'; }
-    const DISC = 240; // Increased size since it's the main focus now!
+    const color = activeColor;
+    const accentGlow = activeGlow;
+    const DISC = 240;
 
     const title = 'title' in item ? item.title : item.company;
     const subtitle = 'subtitle' in item ? item.subtitle : item.role;
@@ -225,7 +220,7 @@ export default function NowPlayingPanel() {
                                 boxShadow: '3px 6px 10px rgba(0,0,0,0.7)', border: '1px solid #444'
                             }}
                         >
-                            <div style={{ position: 'absolute', width: '3px', height: '6px', background: '#D97706', bottom: '4px', left: '5px', borderRadius: '1px' }} />
+                            <div style={{ position: 'absolute', width: '3px', height: '6px', background: color, bottom: '4px', left: '5px', borderRadius: '1px' }} />
                         </div>
                     </motion.div>
 

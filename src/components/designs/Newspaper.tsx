@@ -60,7 +60,7 @@ export default function Newspaper({ item }: InfoPanelProps) {
         >
             {/* ── MASTHEAD ── */}
             <div className="w-full text-center border-b-2 border-t-4 border-[#2b2b2b] pt-4 pb-2 px-6 shrink-0">
-                <h1 className="font-black tracking-normal uppercase leading-tight" style={{ fontSize: '36px', color: '#111' }}>
+                <h1 className="font-black tracking-normal uppercase leading-tight newspaper-masthead" style={{ fontSize: '36px', color: '#111' }}>
                     {('newspaperData' in item && item.newspaperData?.masthead) ? item.newspaperData.masthead : 'THE DAILY DISPATCH'}
                 </h1>
                 <div className="border-t border-[#2b2b2b] mt-3 pt-1 flex justify-between px-2">
@@ -73,7 +73,7 @@ export default function Newspaper({ item }: InfoPanelProps) {
 
             {/* ── HEADLINE ── */}
             <div className="text-center pt-5 pb-4 px-6 shrink-0">
-                <h2 className="font-extrabold uppercase leading-[1.1] mb-3" style={{ fontSize: '28px', color: '#111' }}>
+                <h2 className="font-extrabold uppercase leading-[1.1] mb-3 newspaper-headline" style={{ fontSize: '28px', color: '#111' }}>
                     {title}
                 </h2>
                 <p className="text-[10px] tracking-[0.2em] uppercase font-bold inline-block border-b border-[#2b2b2b] pb-1">
@@ -83,7 +83,7 @@ export default function Newspaper({ item }: InfoPanelProps) {
 
             {/* ── BODY (FLOAT LAYOUT) ── */}
             <div
-                className="flex-1 min-h-0 overflow-y-auto"
+                className="flex-1 min-h-0 overflow-y-auto newspaper-body-container"
                 style={{
                     borderBottom: '1px solid rgba(43,43,43,0.3)',
                     padding: '0 20px 12px 20px',
@@ -93,7 +93,7 @@ export default function Newspaper({ item }: InfoPanelProps) {
             >
                 {/* RIGHT FLOATED IMAGE */}
                 <div
-                    className="shrink-0 flex flex-col float-right"
+                    className="shrink-0 flex flex-col float-right newspaper-photo"
                     style={{ width: '45%', marginLeft: '20px', marginBottom: '12px', paddingTop: '4px' }}
                 >
                     {/* Vintage photograph */}
@@ -183,7 +183,7 @@ export default function Newspaper({ item }: InfoPanelProps) {
 
             {/* ── FOOTER / CLASSIFIEDS ── */}
             <div
-                className="w-full px-6 pt-3 pb-4 shrink-0"
+                className="w-full px-6 pt-3 pb-4 shrink-0 newspaper-footer"
                 style={{ borderTop: '3px solid #2b2b2b' }}
             >
                 <div className="flex justify-between items-end gap-8">

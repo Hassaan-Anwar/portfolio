@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMusicStore } from '@/store/musicStore';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export interface CrateItem {
     id: string | number;
@@ -16,6 +17,7 @@ interface CrateProps {
 }
 
 export default function Crate({ title, items }: CrateProps) {
+    const isMobile = useIsMobile();
     const [itemOrder, setItemOrder] = useState(() => items.map(i => i.id));
     const [slidingOutId, setSlidingOutId] = useState<string | number | null>(null);
     const [draggingId, setDraggingId] = useState<string | number | null>(null);
@@ -111,11 +113,11 @@ export default function Crate({ title, items }: CrateProps) {
                                     key={item.id}
 
                                     initial={false}
-                                    drag={visualIndex === 0 ? true : false}
+                                    drag={visualIndex === 0 ? (isMobile ? 'x' : true) : false}
                                     dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                                     dragElastic={0.8}
                                     dragSnapToOrigin
-                                    whileDrag={{ scale: DRAG_SCALE, zIndex: 9999 }}
+                                    whileDrag={{ scale: isMobile ? 1.1 : DRAG_SCALE, zIndex: 9999 }}
                                     onDragStart={() => {
                                         setDraggingId(item.id);
                                         useMusicStore.getState().setDragging(true);
@@ -124,11 +126,17 @@ export default function Crate({ title, items }: CrateProps) {
                                         setDraggingId(null);
                                         useMusicStore.getState().setDragging(false);
 
-                                        if (info.offset.x < -100) {
+                                        const isTap = Math.abs(info.offset.x) < 24 && Math.abs(info.offset.y) < 24;
+                                        if (isMobile && isTap) {
+                                            item.onPlay?.();
+                                            return;
+                                        }
+
+                                        if (info.offset.x < (isMobile ? -70 : -100)) {
                                             handleNext();
-                                        } else if (info.offset.x > 200) {
-                                            if (item.onPlay) item.onPlay();
-                                            handleNext();
+                                        } else if (info.offset.x > (isMobile ? 90 : 200)) {
+                                            item.onPlay?.();
+                                            if (!isMobile) handleNext();
                                         }
                                     }}
                                     animate={{

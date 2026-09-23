@@ -6,6 +6,7 @@ import { getActiveInfoItem } from '@/data/info';
 import InfoPanel from '@/components/InfoPanel';
 import { SkipBack, SkipForward, Play, Pause } from 'lucide-react';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
+import useIsMobile from '@/hooks/useIsMobile';
 import { useRef, useCallback, useEffect } from 'react';
 
 const DISC_BG = `radial-gradient(circle,
@@ -189,6 +190,76 @@ function VolumeDial({ volume, setVolume, color, accentGlow }: VolumeDial) {
     );
 }
 
+function PlayerBar({
+    title, subtitle, item, color, isPlaying, waveBars, prev, next, togglePlay, overlay,
+}: {
+    title: string;
+    subtitle: string;
+    item: { shortTitle: string; coverFont: string };
+    color: string;
+    isPlaying: boolean;
+    waveBars: number;
+    prev: () => void;
+    next: () => void;
+    togglePlay: () => void;
+    overlay: boolean;
+}) {
+    return (
+        <div
+            className="player-bar bg-black/30 backdrop-blur-md border-t border-white/10"
+            style={{
+                position: overlay ? 'absolute' : 'relative',
+                bottom: overlay ? 0 : undefined,
+                left: overlay ? 0 : undefined,
+                right: overlay ? 0 : undefined,
+                height: '64px',
+                padding: overlay ? '0 24px' : '0 12px',
+                display: 'grid',
+                gridTemplateColumns: overlay ? '1fr auto 1fr' : 'minmax(0, 1fr) auto auto',
+                alignItems: 'center',
+                zIndex: 10,
+                flexShrink: 0,
+                gap: overlay ? 0 : '8px',
+            }}
+        >
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={title}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    transition={{ duration: 0.2 }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}
+                >
+                    <div style={{ width: '36px', height: '36px', borderRadius: '6px', flexShrink: 0, background: `linear-gradient(135deg, ${color}66, #1B1229)`, border: `1px solid ${color}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
+                        <span className={item.coverFont}>{item.shortTitle}</span>
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                        <p style={{ fontSize: '12px', fontWeight: 700, color: '#F4F1EA', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</p>
+                        <p className="font-mono" style={{ fontSize: '10px', color: '#9b93ae', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{subtitle}</p>
+                    </div>
+                </motion.div>
+            </AnimatePresence>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: overlay ? '20px' : '12px', justifyContent: 'center' }}>
+                <button type="button" onClick={prev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipBack size={18} /></button>
+
+                <button type="button" onClick={togglePlay} style={{ background: color, border: 'none', cursor: 'pointer', color: '#0d0a14', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'transform 0.15s' }} onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.08)')} onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}>
+                    {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
+                </button>
+
+                <button type="button" onClick={next} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipForward size={18} /></button>
+            </div>
+
+            <div style={{ display: overlay ? 'flex' : 'none', alignItems: 'center', gap: '2px', height: '28px', justifyContent: 'flex-end', opacity: isPlaying ? 1 : 0.4 }}>
+                {Array.from({ length: waveBars }).map((_, i) => (
+                    <div key={i} style={{ width: '3px', background: color, borderRadius: '2px', height: isPlaying ? `${6 + (i % 7) * 3}px` : '3px', transition: 'height 0.4s ease', animation: isPlaying ? `waveBar ${0.55 + (i % 5) * 0.15}s ease-in-out ${i * 0.04}s infinite alternate` : 'none' }} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
 // ─── Main Panel ───────────────────────────────────────────────────────────────
 export default function NowPlayingPanel() {
     // Mount the audio engine — it owns all playback side-effects
@@ -212,16 +283,19 @@ export default function NowPlayingPanel() {
     const color = activeColor;
     const accentGlow = activeGlow;
     const DISC = 240;
+    const isMobile = useIsMobile();
+    const waveBars = isMobile ? 8 : 18;
 
     const title = 'title' in item ? item.title : item.company;
     const subtitle = 'subtitle' in item ? item.subtitle : item.role;
 
     return (
         <div
-            className="bg-black/30 backdrop-blur-md border border-white/10"
+            className="now-playing-panel bg-black/30 backdrop-blur-md border border-white/10"
             style={{
                 display: 'grid',
-                gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+                gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) minmax(0, 1fr)',
+                gridTemplateRows: isMobile ? 'auto auto minmax(0, 1fr)' : 'minmax(0, 1fr)',
                 height: '100%',
                 width: '100%',
                 overflow: 'hidden',
@@ -230,20 +304,28 @@ export default function NowPlayingPanel() {
         >
             {/* ── LEFT HALF: Giant High-Fidelity Turntable ── */}
             <div
+                className="turntable-col"
                 style={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: isMobile ? 'flex-start' : 'center',
                     justifyContent: 'center',
-                    borderRight: '1px solid #302C44',
+                    borderRight: isMobile ? 'none' : '1px solid #302C44',
+                    borderBottom: isMobile ? '1px solid #302C44' : 'none',
                     position: 'relative',
+                    minHeight: 0,
+                    height: isMobile ? '240px' : 'auto',
+                    padding: isMobile ? '28px 12px 0' : 0,
                 }}
             >
                 {/* Realistic Turntable Base (Plinth) */}
                 <div
+                    className="turntable-plinth"
                     style={{
                         position: 'relative',
                         width: '360px',
                         height: '380px',
+                        transform: isMobile ? 'scale(0.55)' : 'none',
+                        transformOrigin: 'top center',
                         borderRadius: '32px',
                         background: 'linear-gradient(135deg, #2a2438 0%, #171322 100%)',
                         border: '1px solid #302C44',
@@ -422,66 +504,47 @@ export default function NowPlayingPanel() {
                     </div>
                 </div>
 
-                {/* ─── INTEGRATED PLAYER BAR ─── */}
-                <div
-                    className="bg-black/30 backdrop-blur-md border-t border-white/10"
-                    style={{
-                        position: 'absolute',
-                        bottom: 0, left: 0, right: 0,
-                        height: '64px',
-                        padding: '0 24px',
-                        display: 'grid',
-                        gridTemplateColumns: '1fr auto 1fr',
-                        alignItems: 'center',
-                        zIndex: 10,
-                    }}
-                >
-                    {/* 1. Track info (Left) */}
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={title}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 10 }}
-                            transition={{ duration: 0.2 }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}
-                        >
-                            <div style={{ width: '36px', height: '36px', borderRadius: '6px', flexShrink: 0, background: `linear-gradient(135deg, ${color}66, #1B1229)`, border: `1px solid ${color}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
-                                <span className={item.coverFont}>{item.shortTitle}</span>
-                            </div>
-                            <div style={{ minWidth: 0 }}>
-                                <p style={{ fontSize: '12px', fontWeight: 700, color: '#F4F1EA', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</p>
-                                <p className="font-mono" style={{ fontSize: '10px', color: '#9b93ae', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{subtitle}</p>
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
-
-                    {/* 2. Controls (Centered) */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'center' }}>
-                        <button onClick={prev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipBack size={18} /></button>
-
-                        <button onClick={togglePlay} style={{ background: color, border: 'none', cursor: 'pointer', color: '#0d0a14', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'transform 0.15s' }} onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.08)')} onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}>
-                            {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
-                        </button>
-
-                        <button onClick={next} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b93ae', display: 'flex', padding: '4px' }} onMouseEnter={e => (e.currentTarget.style.color = '#F4F1EA')} onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}><SkipForward size={18} /></button>
-                    </div>
-
-                    {/* 3. Visualizer (Right) */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', height: '28px', justifyContent: 'flex-end', opacity: isPlaying ? 1 : 0.4 }}>
-                        {Array.from({ length: 18 }).map((_, i) => (
-                            <div key={i} style={{ width: '3px', background: color, borderRadius: '2px', height: isPlaying ? `${6 + (i % 7) * 3}px` : '3px', transition: 'height 0.4s ease', animation: isPlaying ? `waveBar ${0.55 + (i % 5) * 0.15}s ease-in-out ${i * 0.04}s infinite alternate` : 'none' }} />
-                        ))}
-                    </div>
-                </div>
+                {/* ─── INTEGRATED PLAYER BAR (desktop overlay) ─── */}
+                {!isMobile && (
+                    <PlayerBar
+                        title={title}
+                        subtitle={subtitle}
+                        item={item}
+                        color={color}
+                        isPlaying={isPlaying}
+                        waveBars={waveBars}
+                        prev={prev}
+                        next={next}
+                        togglePlay={togglePlay}
+                        overlay
+                    />
+                )}
             </div>
+
+            {isMobile && (
+                <PlayerBar
+                    title={title}
+                    subtitle={subtitle}
+                    item={item}
+                    color={color}
+                    isPlaying={isPlaying}
+                    waveBars={waveBars}
+                    prev={prev}
+                    next={next}
+                    togglePlay={togglePlay}
+                    overlay={false}
+                />
+            )}
 
             {/* ── RIGHT HALF: Selectable information treatment ── */}
             <div
+                className="info-col"
                 style={{
                     overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
+                    minHeight: 0,
+                    minWidth: 0,
                 }}
             >
                 <AnimatePresence mode="wait">

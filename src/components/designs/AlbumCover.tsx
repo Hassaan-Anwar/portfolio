@@ -112,11 +112,11 @@ export default function AlbumCover({ item }: InfoPanelProps) {
     const liveHref = liveUrl && liveUrl !== '#' ? liveUrl : undefined;
 
     return (
-        <div className="w-full h-full flex overflow-y-auto overflow-x-hidden" style={{ fontFamily: '"JetBrains Mono", monospace', scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
+        <div className="w-full h-full flex overflow-y-auto overflow-x-hidden album-cover-root" style={{ fontFamily: '"JetBrains Mono", monospace', scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
 
             {/* ── LEFT SLEEVE PANEL ──────────────────── */}
             <div
-                className="relative flex flex-col shrink-0 overflow-hidden"
+                className="relative flex flex-col shrink-0 overflow-hidden album-cover-sleeve"
                 style={{ width: '38%', background: sleeveColor }}
             >
                 {/* Noise texture overlay */}
@@ -232,7 +232,7 @@ export default function AlbumCover({ item }: InfoPanelProps) {
                 </div>
 
                 {/* Track listing — shrink-0 so it takes natural height only */}
-                <div className="shrink-0 flex px-6 pt-5 pb-4 gap-6">
+                <div className="shrink-0 flex px-6 pt-5 pb-4 gap-6 album-cover-sides">
 
                     {/* Side A */}
                     <div className="flex-1 flex flex-col min-w-0">

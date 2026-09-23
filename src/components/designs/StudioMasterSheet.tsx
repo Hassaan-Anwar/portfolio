@@ -54,7 +54,7 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
 
     return (
         <article
-            className="w-full h-full relative flex flex-col rounded-xl overflow-y-auto overflow-x-hidden"
+            className="w-full h-full relative flex flex-col rounded-xl overflow-y-auto overflow-x-hidden studio-master"
             style={{
                 fontFamily: '"JetBrains Mono", monospace',
                 background: 'linear-gradient(160deg, #1c1c1f 0%, #141416 100%)',
@@ -70,7 +70,7 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
             ))}
 
             {/* ── TAPE HEADER BAR ── */}
-            <div className="flex items-center justify-between px-5 py-2.5 shrink-0"
+            <div className="flex items-center justify-between px-5 py-2.5 shrink-0 studio-tape-header"
                 style={{ background: '#1a1a1e', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                 <div className="font-bold tracking-widest px-3 py-1 text-[10px] rounded-sm"
                     style={{ background: '#e4e4e7', color: '#111' }}>
@@ -83,7 +83,7 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
 
             {/* ── TITLE BLOCK ── */}
             <div className="px-6 pt-4 pb-2 shrink-0">
-                <h1 className="font-bold text-white leading-none" style={{ fontSize: '38px', letterSpacing: '-0.02em' }}>
+                <h1 className="font-bold text-white leading-none studio-title" style={{ fontSize: '38px', letterSpacing: '-0.02em' }}>
                     {title}
                 </h1>
                 <h2 style={{ fontSize: '17px', color: '#71717a', marginTop: '4px' }}>
@@ -99,7 +99,7 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                 style={{ paddingRight: '32px' }}
             >
                 {/* CRT monitor — floated left so log text wraps around it */}
-                <div className="flex flex-col gap-2" style={{ float: 'left', width: '280px', marginRight: '24px', marginBottom: '12px' }}>
+                <div className="flex flex-col gap-2" style={{ float: 'left', width: '280px', marginRight: '24px', marginBottom: '12px' }} data-studio-crt>
                     {/* Thick outer bezel */}
                     <div className="w-full rounded-xl overflow-hidden"
                         style={{
@@ -190,7 +190,7 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
             </div>
 
             {/* ── BOTTOM ACTION STRIP ── */}
-            <div className="shrink-0 flex flex-row"
+            <div className="shrink-0 flex flex-row studio-actions"
                 style={{
                     background: 'linear-gradient(90deg, #18181a 0%, #1c1c1f 100%)',
                     borderTop: '1px solid rgba(255,255,255,0.06)',

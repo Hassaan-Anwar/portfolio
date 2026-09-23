@@ -1,10 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=UnifrakturMaguntia&family=Creepster&family=Permanent+Marker&family=Pirata+One&family=Nosifer&display=swap');
 
-.font-album-1 { font-family: 'UnifrakturMaguntia', serif; }
-.font-album-2 { font-family: 'Creepster', display; }
-.font-album-3 { font-family: 'Permanent Marker', cursive; }
-.font-album-4 { font-family: 'Pirata One', display; }
-.font-album-5 { font-family: 'Nosifer', display; }
+.font-album-1 {
+  font-family: 'UnifrakturMaguntia', serif;
+}
+
+.font-album-2 {
+  font-family: 'Creepster', display;
+}
+
+.font-album-3 {
+  font-family: 'Permanent Marker', cursive;
+}
+
+.font-album-4 {
+  font-family: 'Pirata One', display;
+}
+
+.font-album-5 {
+  font-family: 'Nosifer', display;
+}
 
 @tailwind base;
 @tailwind components;
@@ -277,8 +291,14 @@ body {
   box-shadow: 3px 5px 0 rgba(0, 0, 0, 0.35);
 }
 
-.vinyl-sticker-demo { background: #91c960; }
-.vinyl-sticker-source { background: #df6d54; transform: rotate(2deg); }
+.vinyl-sticker-demo {
+  background: #91c960;
+}
+
+.vinyl-sticker-source {
+  background: #df6d54;
+  transform: rotate(2deg);
+}
 
 /* Glassmorphism card */
 .glass {
@@ -302,10 +322,226 @@ body {
   pointer-events: none;
   z-index: 5;
 }
+
 @keyframes waveBar {
-  from { transform: scaleY(0.4); }
-  to { transform: scaleY(1); }
+  from {
+    transform: scaleY(0.4);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
 }
 
 
 
+
+/* -- MOBILE RESPONSIVENESS OVERRIDES -- */
+@media (max-width: 768px) {
+
+  /* Turntable Base Scaling */
+  .turntable-plinth {
+    transform: scale(0.85);
+  }
+
+  /* Press Kit / Gatefold */
+  .press-kit-body {
+    grid-template-columns: 1fr !important;
+  }
+
+  .gatefold-title {
+    font-size: 42px !important;
+    text-align: center;
+  }
+
+  .gatefold-subtitle {
+    font-size: 22px !important;
+    text-align: center;
+  }
+
+  .gatefold-footer {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 16px;
+  }
+
+  /* Studio Master Sheet */
+  .studio-master {
+    height: auto !important;
+  }
+
+  .studio-tape-header {
+    flex-wrap: wrap;
+  }
+
+  .studio-title {
+    font-size: 28px !important;
+  }
+
+  [data-studio-crt] {
+    float: none !important;
+    width: 100% !important;
+    margin: 0 0 20px 0 !important;
+  }
+
+  .studio-actions {
+    flex-direction: column;
+    padding: 16px 0;
+    gap: 16px !important;
+    min-height: auto !important;
+  }
+
+  .studio-actions>div[style*="width: 1px"] {
+    display: none !important;
+  }
+
+  /* Newspaper */
+  .newspaper-masthead {
+    font-size: 28px !important;
+  }
+
+  .newspaper-headline {
+    font-size: 22px !important;
+  }
+
+  .newspaper-photo {
+    float: none !important;
+    width: 100% !important;
+    margin: 0 0 16px 0 !important;
+  }
+
+  .newspaper-footer>div {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  /* Album Cover */
+  .album-cover-root {
+    flex-direction: column !important;
+  }
+
+  .album-cover-sleeve {
+    width: 100% !important;
+  }
+
+  .album-cover-sides {
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+}
+
+/* -- MOBILE CRATES PORTAL (CSS fixes) -- */
+@media (max-width: 768px) {
+  .site-header-name {
+    font-size: 10px !important;
+    text-align: center;
+  }
+
+  .site-header-role {
+    font-size: 6px !important;
+  }
+
+  .site-header-links {
+    gap: 6px !important;
+  }
+
+  .site-header-status {
+    gap: 6px !important;
+  }
+
+  /* Make sure Newspaper body scrolls full bleed */
+  .newspaper-body-container {
+    flex: none !important;
+    overflow-y: visible !important;
+    height: auto !important;
+  }
+}
+
+/* Mobile Crates UI Overlay */
+.mobile-crates-tab {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(27, 18, 41, 0.95);
+  border: 1px solid var(--tab-accent, #634B7D);
+  padding: 12px 24px;
+  border-radius: 999px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.mobile-crates-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+
+.mobile-crates-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 85dvh;
+  background: linear-gradient(180deg, #181423 0%, #0d0a14 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px 24px 0 0;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mobile-crates-handle-row {
+  flex-shrink: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.mobile-crates-handle {
+  width: 48px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.mobile-crates-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-crates-heading {
+  padding: 0 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.mobile-crates-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}

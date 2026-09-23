@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import { type ReactNode, useEffect, useRef, useState, useCallback } from 'react';
+import { type CSSProperties, type ReactNode, useEffect, useRef, useState, useCallback } from 'react';
 import NowPlayingPanel from './NowPlayingPanel';
 import VinylRecord from './VinylRecord';
 import { useMusicStore } from '@/store/musicStore';
@@ -10,7 +10,8 @@ import { EXPERIENCES } from '@/data/experience';
 import { FEATURED, ABOUT } from '@/data/info';
 import Crate from './Crate';
 import CosmicRainCanvas from './CosmicRainCanvas';
-import { Disc3, ChevronLeft } from 'lucide-react';
+import useIsMobile from '@/hooks/useIsMobile';
+import { Disc3, ChevronLeft, ChevronUp, X } from 'lucide-react';
 
 /* ─── Floating space cat (pixel art SVG) ─── */
 function SpaceCat({
@@ -289,6 +290,94 @@ function PeekDrawer({ children, accentColor, isOpen, setIsOpen }: { children: Re
     );
 }
 
+/* ═══════════════════════════════════════════════════════════
+   MOBILE LIBRARY — bottom sheet (tap to play). Desktop PeekDrawer is untouched.
+   ═══════════════════════════════════════════════════════════ */
+function MobileLibrary({
+    children, accentColor, isOpen, setIsOpen,
+}: {
+    children: ReactNode;
+    accentColor: string;
+    isOpen: boolean;
+    setIsOpen: (v: boolean) => void;
+}) {
+    return (
+        <>
+            <motion.button
+                type="button"
+                className="mobile-crates-tab"
+                onClick={() => setIsOpen(true)}
+                aria-label="Open record crates"
+                style={{
+                    '--tab-accent': accentColor,
+                } as CSSProperties}
+                drag
+                dragConstraints={{ left: -140, right: 140, top: -600, bottom: 10 }}
+                dragElastic={0}
+                dragMomentum={true}
+            >
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                    style={{ display: 'flex' }}
+                >
+                    <Disc3 size={16} color={accentColor} />
+                </motion.div>
+                <span className="font-pixel" style={{ fontSize: '7px', letterSpacing: '3px', color: '#F4F1EA' }}>
+                    CRATES
+                </span>
+                <ChevronUp size={14} color="#9b93ae" />
+            </motion.button>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <>
+                        <motion.div
+                            key="crates-backdrop"
+                            className="mobile-crates-backdrop"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsOpen(false)}
+                        />
+                        <motion.div
+                            key="crates-sheet"
+                            className="mobile-crates-sheet"
+                            initial={{ y: '100%' }}
+                            animate={{ y: 0 }}
+                            exit={{ y: '100%' }}
+                            transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+                        >
+                            <div className="mobile-crates-handle-row">
+                                <div className="mobile-crates-handle" />
+                                <button
+                                    type="button"
+                                    aria-label="Close crates"
+                                    onClick={() => setIsOpen(false)}
+                                    className="mobile-crates-close"
+                                >
+                                    <X size={16} color="#9b93ae" />
+                                </button>
+                            </div>
+                            <div className="mobile-crates-heading">
+                                <span className="font-pixel" style={{ fontSize: '9px', letterSpacing: '3px', color: accentColor }}>
+                                    RECORD LIBRARY
+                                </span>
+                                <span className="font-pixel" style={{ fontSize: '6px', letterSpacing: '1px', color: '#9b93ae' }}>
+                                    SWIPE RIGHT TO PLAY · SWIPE LEFT TO SIFT
+                                </span>
+                            </div>
+                            <div className="mobile-crates-scroll library-scrollbar">
+                                {children}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+        </>
+    );
+}
+
 /* ─── Main ─── */
 export default function PixelRoom() {
     const {
@@ -297,8 +386,23 @@ export default function PixelRoom() {
     } = useMusicStore();
 
     const isProject = activeSection === 'projects';
+    const isMobile = useIsMobile();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    useEffect(() => {
+        document.body.classList.toggle('is-mobile-layout', isMobile);
+        return () => document.body.classList.remove('is-mobile-layout');
+    }, [isMobile]);
+
+    useEffect(() => {
+        if (!isMobile) setDrawerOpen(false);
+    }, [isMobile]);
+
+    const playThenClose = useCallback((fn: () => void) => {
+        fn();
+        if (isMobile) setDrawerOpen(false);
+    }, [isMobile]);
 
     const CATS = [
         { x: 12, y: 18, scale: 1, phase: 0, rotateDir: 1 },
@@ -307,6 +411,73 @@ export default function PixelRoom() {
         { x: 35, y: 55, scale: 0.75, phase: 3.5, rotateDir: -1 },
         { x: 70, y: 62, scale: 0.9, phase: 0.7, rotateDir: 1 },
     ];
+
+    const libraryInner = (
+        <div style={{ padding: isMobile ? '8px 16px 32px' : '24px 32px', display: 'flex', flexDirection: 'column', gap: isMobile ? '28px' : '32px' }}>
+            <Crate
+                title="ABOUT ME"
+                items={[
+                    {
+                        id: 'about-1',
+                        onPlay: () => playThenClose(() => useMusicStore.getState().setCurrentAbout(0)),
+                        content: (
+                            <VinylRecord
+                                color={ABOUT[0].color} accentGlow={ABOUT[0].accentGlow} shortTitle={ABOUT[0].shortTitle} coverFont={ABOUT[0].coverFont} label={ABOUT[0].vinylLabel} title={ABOUT[0].title}
+                                isActive={activeSection === 'about'} isPlaying={activeSection === 'about' && isPlaying}
+                            />
+                        )
+                    }
+                ]}
+            />
+            <Crate
+                title="FEATURED PROJECTS"
+                items={FEATURED.map((feat, i) => ({
+                    id: `bs-${i}`,
+                    onPlay: () => playThenClose(() => useMusicStore.getState().setCurrentBestsellers(i)),
+                    content: (
+                        <VinylRecord
+                            color={feat.color} accentGlow={feat.accentGlow} shortTitle={feat.shortTitle} coverFont={feat.coverFont} label={feat.vinylLabel} title={feat.title}
+                            isActive={activeSection === 'bestsellers' && currentBestsellersIndex === i}
+                            isPlaying={activeSection === 'bestsellers' && currentBestsellersIndex === i && isPlaying}
+                        />
+                    )
+                }))}
+            />
+            <Crate
+                title="EXPERIENCE"
+                items={EXPERIENCES.map((exp, i) => {
+                    const isActive = activeSection === 'experience' && i === currentExperienceIndex;
+                    return {
+                        id: exp.id.toString(),
+                        onPlay: () => playThenClose(() => useMusicStore.getState().setCurrentExperience(i)),
+                        content: (
+                            <VinylRecord
+                                color="#2DD4BF" accentGlow="rgba(45,212,191,0.6)" shortTitle={exp.shortTitle} coverFont={exp.coverFont} label={exp.vinylLabel} title={exp.company}
+                                isActive={isActive} isPlaying={isActive && isPlaying}
+                            />
+                        )
+                    };
+                })}
+            />
+            <Crate
+                title="PROJECTS"
+                items={PROJECTS.map((proj, i) => {
+                    const isActive = activeSection === 'projects' && i === currentProjectIndex;
+                    return {
+                        id: proj.id.toString(),
+                        onPlay: () => playThenClose(() => useMusicStore.getState().setCurrentProject(i)),
+                        content: (
+                            <VinylRecord
+                                color={proj.color} accentGlow={proj.accentGlow} shortTitle={proj.shortTitle} coverFont={proj.coverFont} label={proj.vinylLabel} title={proj.title}
+                                isActive={isActive} isPlaying={isActive && isPlaying}
+                            />
+                        )
+                    };
+                })}
+            />
+            <div style={{ height: isMobile ? 24 : 120 }} />
+        </div>
+    );
 
     return (
         <div
@@ -323,7 +494,7 @@ export default function PixelRoom() {
 
             {/* ══ TOP HEADER ══ */}
             <header
-                className="bg-black/30 backdrop-blur-md border-b border-white/10"
+                className="site-header bg-black/30 backdrop-blur-md border-b border-white/10"
                 style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr auto 1fr',
@@ -337,7 +508,7 @@ export default function PixelRoom() {
                 }}
             >
                 {/* ── LEFT: Now Playing Status ── */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className="site-header-status" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <motion.div
                         style={{
                             width: '8px', height: '8px', borderRadius: '50%',
@@ -359,15 +530,15 @@ export default function PixelRoom() {
                 </div>
 
                 {/* ── CENTER: Identity ── */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                <div className="site-header-identity" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
                     <span
-                        className="font-pixel tracking-widest"
+                        className="site-header-name font-pixel tracking-widest"
                         style={{ fontSize: '13px', color: '#F4F1EA', letterSpacing: '0.18em' }}
                     >
                         HASSAAN ANWAR
                     </span>
                     <span
-                        className="font-pixel tracking-widest"
+                        className="site-header-role font-pixel tracking-widest"
                         style={{ fontSize: '7px', color: '#9b93ae', letterSpacing: '0.22em' }}
                     >
                         SOFTWARE ENGINEER
@@ -375,7 +546,7 @@ export default function PixelRoom() {
                 </div>
 
                 {/* ── RIGHT: Contact Links ── */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end' }}>
+                <div className="site-header-links" style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end' }}>
                     {/* GitHub */}
                     <a href="https://github.com/Hassaan-Anwar" target="_blank" rel="noopener noreferrer"
                         style={{ display: 'flex', alignItems: 'center', color: '#9b93ae', transition: 'color 0.2s' }}
@@ -447,88 +618,20 @@ export default function PixelRoom() {
             </header>
 
             {/* ══ MAIN CONTENT AREA ══ */}
-            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'row', position: 'relative', overflow: 'hidden' }}>
+            <div className="site-main" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'row', position: 'relative', overflow: 'hidden' }}>
 
-                {/* PEEK DRAWER — slides in from the left */}
-                <PeekDrawer accentColor={activeColor} isOpen={drawerOpen} setIsOpen={setDrawerOpen}>
-                    <div style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-
-                        {/* ABOUT CRATE */}
-                        <Crate
-                            title="ABOUT ME"
-                            items={[
-                                {
-                                    id: 'about-1',
-                                    onPlay: () => useMusicStore.getState().setCurrentAbout(0),
-                                    content: (
-                                        <VinylRecord
-                                            color={ABOUT[0].color} accentGlow={ABOUT[0].accentGlow} shortTitle={ABOUT[0].shortTitle} coverFont={ABOUT[0].coverFont} label={ABOUT[0].vinylLabel} title={ABOUT[0].title}
-                                            isActive={activeSection === 'about'} isPlaying={activeSection === 'about' && isPlaying}
-                                        />
-                                    )
-                                }
-                            ]}
-                        />
-
-                        {/* FEATURED PROJECTS CRATE */}
-                        <Crate
-                            title="FEATURED PROJECTS"
-                            items={FEATURED.map((feat, i) => ({
-                                id: `bs-${i}`,
-                                onPlay: () => useMusicStore.getState().setCurrentBestsellers(i),
-                                content: (
-                                    <VinylRecord
-                                        color={feat.color} accentGlow={feat.accentGlow} shortTitle={feat.shortTitle} coverFont={feat.coverFont} label={feat.vinylLabel} title={feat.title}
-                                        isActive={activeSection === 'bestsellers' && currentBestsellersIndex === i}
-                                        isPlaying={activeSection === 'bestsellers' && currentBestsellersIndex === i && isPlaying}
-                                    />
-                                )
-                            }))}
-                        />
-
-                        {/* EXPERIENCE CRATE */}
-                        <Crate
-                            title="EXPERIENCE"
-                            items={EXPERIENCES.map((exp, i) => {
-                                const isActive = activeSection === 'experience' && i === currentExperienceIndex;
-                                return {
-                                    id: exp.id.toString(),
-                                    onPlay: () => useMusicStore.getState().setCurrentExperience(i),
-                                    content: (
-                                        <VinylRecord
-                                            color="#2DD4BF" accentGlow="rgba(45,212,191,0.6)" shortTitle={exp.shortTitle} coverFont={exp.coverFont} label={exp.vinylLabel} title={exp.company}
-                                            isActive={isActive} isPlaying={isActive && isPlaying}
-                                        />
-                                    )
-                                };
-                            })}
-                        />
-
-                        {/* PROJECTS CRATE */}
-                        <Crate
-                            title="PROJECTS"
-                            items={PROJECTS.map((proj, i) => {
-                                const isActive = activeSection === 'projects' && i === currentProjectIndex;
-                                return {
-                                    id: proj.id.toString(),
-                                    onPlay: () => useMusicStore.getState().setCurrentProject(i),
-                                    content: (
-                                        <VinylRecord
-                                            color={proj.color} accentGlow={proj.accentGlow} shortTitle={proj.shortTitle} coverFont={proj.coverFont} label={proj.vinylLabel} title={proj.title}
-                                            isActive={isActive} isPlaying={isActive && isPlaying}
-                                        />
-                                    )
-                                };
-                            })}
-                        />
-
-                        {/* Breathing room */}
-                        <div style={{ height: 120 }} />
-                    </div>
-                </PeekDrawer>
+                {isMobile ? (
+                    <MobileLibrary accentColor={activeColor} isOpen={drawerOpen} setIsOpen={setDrawerOpen}>
+                        {libraryInner}
+                    </MobileLibrary>
+                ) : (
+                    <PeekDrawer accentColor={activeColor} isOpen={drawerOpen} setIsOpen={setDrawerOpen}>
+                        {libraryInner}
+                    </PeekDrawer>
+                )}
 
                 {/* RIGHT: Main Player Dashboard — takes full width, drawer overlays */}
-                <div style={{ flex: 1, minWidth: 0, height: '100%', overflow: 'hidden' }}>
+                <div className="site-player" style={{ flex: 1, minWidth: 0, height: '100%', overflow: 'hidden' }}>
                     <NowPlayingPanel />
                 </div>
             </div>

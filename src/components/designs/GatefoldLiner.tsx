@@ -67,6 +67,7 @@ function PressKitProfile({ item }: { item: any }) {
 
             {/* ── MAIN 2-COL BODY ──────────────────────────────────────── */}
             <div
+                className="press-kit-body"
                 style={{
                     display: 'grid',
                     gridTemplateColumns: '2fr 1fr',
@@ -90,7 +91,7 @@ function PressKitProfile({ item }: { item: any }) {
                             I'm a <strong>FAST-NUCES Computer Science graduate</strong> specializing in production-grade AI pipelines and robust backend infrastructure. From fine-tuning models for conversational agents to architecting scalable microservices, my work bridges the gap between research concepts and real-world deployment.
                         </p>
                         <p>
-                            This portfolio is built as an interactive record collection. To explore my professional experience and featured open-source work, simply flip through the records in the crates on the left. Drop a disc on the turntable to play its contents in the main studio view.
+                            This portfolio is built as an interactive record collection. Flip through the crates, then play a disc on the turntable to read its liner notes.
                         </p>
                     </div>
                 </div>
@@ -294,10 +295,10 @@ function StandardGatefold({ item, isProject }: { item: any; isProject: boolean }
             </div>
 
             <div className="mb-4">
-                <h1 className="font-editorial leading-none" style={{ fontSize: '56px', fontWeight: 800, color: '#1a1c1d', letterSpacing: '-0.03em' }}>
+                <h1 className="font-editorial leading-none gatefold-title" style={{ fontSize: '56px', fontWeight: 800, color: '#1a1c1d', letterSpacing: '-0.03em' }}>
                     {title}
                 </h1>
-                <h2 className="font-editorial italic" style={{ fontSize: '28px', color: '#3a3c40', marginTop: '6px' }}>
+                <h2 className="font-editorial italic gatefold-subtitle" style={{ fontSize: '28px', color: '#3a3c40', marginTop: '6px' }}>
                     {subtitle}
                 </h2>
                 <p className="font-mono mt-6 mb-4" style={{ fontSize: '13px', color: '#444', letterSpacing: '1px', textTransform: 'uppercase' }}>
@@ -317,7 +318,7 @@ function StandardGatefold({ item, isProject }: { item: any; isProject: boolean }
 
             <hr className="w-full border-t border-[rgba(0,0,0,0.8)] opacity-20 mt-4 mb-4" />
 
-            <div className="w-full flex flex-row justify-between items-end relative pb-2">
+            <div className="w-full flex flex-row justify-between items-end relative pb-2 gatefold-footer">
                 <div className="font-mono uppercase leading-relaxed flex-1 tracking-widest text-black" style={{ fontSize: '11px', maxWidth: '65%' }}>
                     <span className="font-extrabold mr-2">{personnelLabel}</span> |
                     {engineered.length > 0 && <span className="text-[#333]"> <strong className="text-black">{engineeringLabel}</strong> {engineered.join(', ')} |</span>}

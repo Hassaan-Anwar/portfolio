@@ -37,6 +37,8 @@ interface MusicStore {
   activeColor: string;
   /** The glow rgba of the currently active item. */
   activeGlow: string;
+  /** Master volume 0–1, default 0.5 */
+  volume: number;
 
   setCurrentAbout: (index: number) => void;
   setCurrentBestsellers: (index: number) => void;
@@ -49,6 +51,7 @@ interface MusicStore {
   openModal: () => void;
   closeModal: () => void;
   setDragging: (v: boolean) => void;
+  setVolume: (v: number) => void;
 }
 
 const ABOUT_COUNT = 1;
@@ -62,12 +65,13 @@ export const useMusicStore = create<MusicStore>((set, get) => ({
   currentBestsellersIndex: 0,
   currentProjectIndex: 0,
   currentExperienceIndex: 0,
-  isPlaying: false,
+  isPlaying: true,
   muted: false,
   modalOpen: false,
   isDragging: false,
   activeColor: ABOUT[0].color,
   activeGlow: ABOUT[0].accentGlow,
+  volume: 0.5,
 
   setCurrentAbout: (index) => {
     const item = ABOUT[index % ABOUT_COUNT];
@@ -136,4 +140,5 @@ export const useMusicStore = create<MusicStore>((set, get) => ({
   openModal: () => set({ modalOpen: true }),
   closeModal: () => set({ modalOpen: false }),
   setDragging: (v) => set({ isDragging: v }),
+  setVolume: (v) => set({ volume: Math.max(0, Math.min(1, v)) }),
 }));

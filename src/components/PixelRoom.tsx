@@ -378,7 +378,7 @@ export default function PixelRoom() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end' }}>
                     {/* GitHub */}
                     <a href="https://github.com/Hassaan-Anwar" target="_blank" rel="noopener noreferrer"
-                        style={{ color: '#9b93ae', transition: 'color 0.2s' }}
+                        style={{ display: 'flex', alignItems: 'center', color: '#9b93ae', transition: 'color 0.2s' }}
                         onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                         onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}
                     >
@@ -389,7 +389,7 @@ export default function PixelRoom() {
 
                     {/* LinkedIn */}
                     <a href="https://www.linkedin.com/in/hassaan-anwar2/" target="_blank" rel="noopener noreferrer"
-                        style={{ color: '#9b93ae', transition: 'color 0.2s' }}
+                        style={{ display: 'flex', alignItems: 'center', color: '#9b93ae', transition: 'color 0.2s' }}
                         onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                         onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}
                     >
@@ -401,7 +401,7 @@ export default function PixelRoom() {
                     {/* Email */}
                     <a href="https://mail.google.com/mail/?view=cm&fs=1&to=hassaan.anwar20052@gmail.com"
                         target="_blank" rel="noopener noreferrer"
-                        style={{ color: '#9b93ae', transition: 'color 0.2s' }}
+                        style={{ display: 'flex', alignItems: 'center', color: '#9b93ae', transition: 'color 0.2s' }}
                         onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                         onMouseLeave={e => (e.currentTarget.style.color = '#9b93ae')}
                     >
@@ -430,7 +430,8 @@ export default function PixelRoom() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            minWidth: copied ? '40px' : '18px'
+                            minWidth: copied ? '40px' : '18px',
+                            height: '18px'
                         }}
                         title="Copy Phone Number"
                     >

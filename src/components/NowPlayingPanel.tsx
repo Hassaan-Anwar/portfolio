@@ -5,6 +5,8 @@ import { useMusicStore } from '@/store/musicStore';
 import { getActiveInfoItem } from '@/data/info';
 import InfoPanel from '@/components/InfoPanel';
 import { SkipBack, SkipForward, Play, Pause } from 'lucide-react';
+import { useAudioEngine } from '@/hooks/useAudioEngine';
+import { useRef, useCallback, useEffect } from 'react';
 
 const DISC_BG = `radial-gradient(circle,
   #222 0% 25%,
@@ -19,15 +21,172 @@ const DISC_BG = `radial-gradient(circle,
   #0c0c0c 91% 93%, #1a1a1a 93% 100%
 )`;
 
+// ─── Analogue Volume Dial ─────────────────────────────────────────────────────
+// Rotation: −135° = 0 vol … 0° = 0.5 vol … +135° = 1.0 vol
+const DIAL_MIN_DEG = -135;
+const DIAL_MAX_DEG = 135;
+
+function volToDeg(v: number) {
+    return DIAL_MIN_DEG + v * (DIAL_MAX_DEG - DIAL_MIN_DEG);
+}
+function degToVol(d: number) {
+    return (d - DIAL_MIN_DEG) / (DIAL_MAX_DEG - DIAL_MIN_DEG);
+}
+
+interface VolumeDial {
+    volume: number;
+    setVolume: (v: number) => void;
+    color: string;
+    accentGlow: string;
+}
+
+function VolumeDial({ volume, setVolume, color, accentGlow }: VolumeDial) {
+    const dialRef = useRef<HTMLDivElement>(null);
+    const dragging = useRef(false);
+    const lastY = useRef(0);
+    const degRef = useRef(volToDeg(volume));
+
+    // Keep degRef synced when volume changes externally
+    useEffect(() => {
+        degRef.current = volToDeg(volume);
+    }, [volume]);
+
+    const onPointerDown = useCallback((e: React.PointerEvent) => {
+        e.preventDefault();
+        dragging.current = true;
+        lastY.current = e.clientY;
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    }, []);
+
+    const onPointerMove = useCallback((e: React.PointerEvent) => {
+        if (!dragging.current) return;
+        const delta = lastY.current - e.clientY; // drag up = louder
+        lastY.current = e.clientY;
+        degRef.current = Math.max(DIAL_MIN_DEG, Math.min(DIAL_MAX_DEG, degRef.current + delta * 1.5));
+        setVolume(degToVol(degRef.current));
+    }, [setVolume]);
+
+    const onPointerUp = useCallback(() => {
+        dragging.current = false;
+    }, []);
+
+    const deg = volToDeg(volume);
+
+    return (
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                userSelect: 'none',
+            }}
+        >
+            {/* Dial ring */}
+            <div
+                style={{
+                    position: 'relative',
+                    width: 52,
+                    height: 52,
+                    borderRadius: '50%',
+                    background: 'linear-gradient(145deg, #3a3540, #1a1521)',
+                    border: `1px solid #4a4258`,
+                    boxShadow: `0 4px 16px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.08), 0 0 12px ${accentGlow}33`,
+                    cursor: 'ns-resize',
+                }}
+                ref={dialRef}
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onPointerLeave={onPointerUp}
+            >
+                {/* Tick marks */}
+                {[-120, -90, -60, -30, 0, 30, 60, 90, 120].map((t) => (
+                    <div
+                        key={t}
+                        style={{
+                            position: 'absolute',
+                            width: '1px',
+                            height: t % 60 === 0 ? '5px' : '3px',
+                            background: Math.abs(t - DIAL_MIN_DEG - (deg - DIAL_MIN_DEG)) < 20 ? color : 'rgba(255,255,255,0.15)',
+                            top: '4px',
+                            left: '50%',
+                            transformOrigin: `0 ${52 / 2 - 4}px`,
+                            transform: `translateX(-50%) rotate(${t}deg)`,
+                            borderRadius: '1px',
+                            transition: 'background 0.2s',
+                        }}
+                    />
+                ))}
+
+                {/* Knob face */}
+                <motion.div
+                    animate={{ rotate: deg }}
+                    transition={{ type: 'spring', stiffness: 600, damping: 30 }}
+                    style={{
+                        position: 'absolute',
+                        inset: '6px',
+                        borderRadius: '50%',
+                        background: `radial-gradient(circle at 35% 30%, #5a5272, #251e35)`,
+                        boxShadow: `inset 0 2px 4px rgba(0,0,0,0.6), inset 0 -1px 2px rgba(255,255,255,0.08)`,
+                    }}
+                >
+                    {/* Indicator line */}
+                    <div
+                        style={{
+                            position: 'absolute',
+                            width: '2px',
+                            height: '12px',
+                            background: color,
+                            top: '2px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            borderRadius: '1px',
+                            boxShadow: `0 0 4px ${accentGlow}`,
+                        }}
+                    />
+                </motion.div>
+            </div>
+
+            {/* Label */}
+            <span
+                className="font-pixel"
+                style={{ fontSize: '6px', color: '#9b93ae', letterSpacing: '2px' }}
+            >
+                GAIN
+            </span>
+
+            {/* Volume % readout */}
+            <span
+                className="font-pixel"
+                style={{ fontSize: '6px', color: color, letterSpacing: '1px', opacity: 0.85 }}
+            >
+                {Math.round(volume * 100)}%
+            </span>
+        </div>
+    );
+}
+
+// ─── Main Panel ───────────────────────────────────────────────────────────────
 export default function NowPlayingPanel() {
-    const { activeSection, currentAboutIndex, currentBestsellersIndex, currentProjectIndex, currentExperienceIndex, isPlaying, isDragging, next, prev, togglePlay, activeColor, activeGlow } =
-        useMusicStore();
+    // Mount the audio engine — it owns all playback side-effects
+    useAudioEngine();
+
+    const {
+        activeSection,
+        currentAboutIndex, currentBestsellersIndex, currentProjectIndex, currentExperienceIndex,
+        isPlaying, isDragging, next, prev, togglePlay,
+        activeColor, activeGlow,
+        volume, setVolume,
+    } = useMusicStore();
+
     const item = getActiveInfoItem(activeSection, {
         about: currentAboutIndex,
         bestsellers: currentBestsellersIndex,
         projects: currentProjectIndex,
         experience: currentExperienceIndex,
     });
+
     const color = activeColor;
     const accentGlow = activeGlow;
     const DISC = 240;
@@ -43,9 +202,8 @@ export default function NowPlayingPanel() {
                 gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
                 height: '100%',
                 width: '100%',
-
                 overflow: 'hidden',
-                position: 'relative'
+                position: 'relative',
             }}
         >
             {/* ── LEFT HALF: Giant High-Fidelity Turntable ── */}
@@ -55,23 +213,24 @@ export default function NowPlayingPanel() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRight: '1px solid #302C44',
-                    position: 'relative'
+                    position: 'relative',
                 }}
             >
                 {/* Realistic Turntable Base (Plinth) */}
-                <div style={{
-                    position: 'relative',
-                    width: '360px',
-                    height: '380px',
-                    borderRadius: '32px',
-                    background: 'linear-gradient(135deg, #2a2438 0%, #171322 100%)',
-                    border: '1px solid #302C44',
-                    boxShadow: `0 24px 48px rgba(0,0,0,0.7), inset 0 2px 4px rgba(255,255,255,0.05), inset 0 -2px 6px rgba(0,0,0,0.5), 0 0 60px ${accentGlow}15`,
-                    transition: 'box-shadow 0.6s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
+                <div
+                    style={{
+                        position: 'relative',
+                        width: '360px',
+                        height: '380px',
+                        borderRadius: '32px',
+                        background: 'linear-gradient(135deg, #2a2438 0%, #171322 100%)',
+                        border: '1px solid #302C44',
+                        boxShadow: `0 24px 48px rgba(0,0,0,0.7), inset 0 2px 4px rgba(255,255,255,0.05), inset 0 -2px 6px rgba(0,0,0,0.5), 0 0 60px ${accentGlow}15`,
+                        transition: 'box-shadow 0.6s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
                 >
                     {/* Sleeping Cat resting on top ledge of record player */}
                     <img
@@ -84,7 +243,7 @@ export default function NowPlayingPanel() {
                             width: '64px',
                             height: 'auto',
                             zIndex: 20,
-                            imageRendering: 'pixelated'
+                            imageRendering: 'pixelated',
                         }}
                     />
 
@@ -97,11 +256,11 @@ export default function NowPlayingPanel() {
                             borderRadius: '50%',
                             background: 'linear-gradient(145deg, #444, #151515)',
                             boxShadow: '0 8px 16px rgba(0,0,0,0.8), inset 0 2px 3px rgba(255,255,255,0.2)',
-                            top: '40px' // shift down slightly to make room for tonearm pivot
+                            top: '40px',
                         }}
                     />
 
-                    {/* Spinning disc (with AnimatePresence for transitions) */}
+                    {/* Spinning disc */}
                     <AnimatePresence mode="popLayout">
                         <motion.div
                             key={title}
@@ -111,7 +270,7 @@ export default function NowPlayingPanel() {
                             transition={{ type: 'spring', stiffness: 180, damping: 22, mass: 1 }}
                             style={{
                                 position: 'absolute',
-                                top: '48px', // Match platter shift
+                                top: '48px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -154,10 +313,7 @@ export default function NowPlayingPanel() {
                                         background: color, border: '1px solid rgba(0,0,0,0.3)',
                                         boxShadow: `0 0 20px ${accentGlow}`, zIndex: 2,
                                     }}
-                                >
-
-
-                                </div>
+                                />
 
                                 {/* Spindle Hole */}
                                 <div
@@ -177,7 +333,7 @@ export default function NowPlayingPanel() {
                         key={`tonearm-${title}`}
                         style={{
                             position: 'absolute',
-                            width: '4px', // metallic tube
+                            width: '4px',
                             height: '160px',
                             background: 'linear-gradient(to right, #e0e0e0, #888, #444)',
                             transformOrigin: 'top center',
@@ -201,7 +357,7 @@ export default function NowPlayingPanel() {
                             <div style={{
                                 position: 'absolute', width: '18px', height: '18px', borderRadius: '50%',
                                 background: 'linear-gradient(135deg, #999, #444)', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.5)'
+                                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.5)',
                             }} />
                         </div>
 
@@ -209,7 +365,7 @@ export default function NowPlayingPanel() {
                         <div style={{
                             position: 'absolute', width: '24px', height: '32px', borderRadius: '6px',
                             background: 'linear-gradient(to right, #777, #222)', top: '-50px', left: '-10px',
-                            boxShadow: '2px 4px 8px rgba(0,0,0,0.6)'
+                            boxShadow: '2px 4px 8px rgba(0,0,0,0.6)',
                         }} />
 
                         {/* Headshell / Stylus */}
@@ -217,7 +373,7 @@ export default function NowPlayingPanel() {
                             style={{
                                 position: 'absolute', width: '14px', height: '34px', background: 'linear-gradient(to bottom, #111, #333)',
                                 borderRadius: '3px 3px 8px 8px', bottom: '-30px', left: '-5px', transform: 'rotate(24deg)',
-                                boxShadow: '3px 6px 10px rgba(0,0,0,0.7)', border: '1px solid #444'
+                                boxShadow: '3px 6px 10px rgba(0,0,0,0.7)', border: '1px solid #444',
                             }}
                         >
                             <div style={{ position: 'absolute', width: '3px', height: '6px', background: color, bottom: '4px', left: '5px', borderRadius: '1px' }} />
@@ -227,10 +383,20 @@ export default function NowPlayingPanel() {
                     {/* Pixel Cat Sticker */}
                     <img src="/pixel_cat.gif" alt="Pixel Cat" style={{ position: 'absolute', bottom: '12px', right: '24px', width: '48px', height: '48px', opacity: 0.9, zIndex: 10, imageRendering: 'pixelated' }} />
 
-                    {/* Decorative Base Buttons */}
-                    <div style={{ position: 'absolute', bottom: '24px', left: '32px', display: 'flex', gap: '12px' }}>
-                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
-                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
+                    {/* ── Base Controls (Original Circles + Volume Dial) ── */}
+                    <div style={{ position: 'absolute', bottom: '16px', left: '32px', display: 'flex', alignItems: 'flex-end', gap: '20px', zIndex: 20 }}>
+                        <div style={{ display: 'flex', gap: '12px', paddingBottom: '20px' }}>
+                            <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
+                            <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
+                        </div>
+                        <div style={{ transform: 'scale(0.85)', transformOrigin: 'bottom left' }}>
+                            <VolumeDial
+                                volume={volume}
+                                setVolume={setVolume}
+                                color={color}
+                                accentGlow={accentGlow}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -239,9 +405,7 @@ export default function NowPlayingPanel() {
                     className="bg-black/30 backdrop-blur-md border-t border-white/10"
                     style={{
                         position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
+                        bottom: 0, left: 0, right: 0,
                         height: '64px',
                         padding: '0 24px',
                         display: 'grid',

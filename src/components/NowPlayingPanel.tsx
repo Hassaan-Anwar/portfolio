@@ -54,16 +54,38 @@ function VolumeDial({ volume, setVolume, color, accentGlow }: VolumeDial) {
     const onPointerDown = useCallback((e: React.PointerEvent) => {
         e.preventDefault();
         dragging.current = true;
-        lastY.current = e.clientY;
         (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    }, []);
+
+        // Optionally calculate initial angle immediately on click
+        if (dialRef.current) {
+            const rect = dialRef.current.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            let angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI) + 90;
+            if (angle > 180) angle -= 360;
+
+            const clamped = Math.max(DIAL_MIN_DEG, Math.min(DIAL_MAX_DEG, angle));
+            degRef.current = clamped;
+            setVolume(degToVol(clamped));
+        }
+    }, [setVolume]);
 
     const onPointerMove = useCallback((e: React.PointerEvent) => {
-        if (!dragging.current) return;
-        const delta = lastY.current - e.clientY; // drag up = louder
-        lastY.current = e.clientY;
-        degRef.current = Math.max(DIAL_MIN_DEG, Math.min(DIAL_MAX_DEG, degRef.current + delta * 1.5));
-        setVolume(degToVol(degRef.current));
+        if (!dragging.current || !dialRef.current) return;
+
+        const rect = dialRef.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // atan2 gives standard angle; +90 rotates 0 degrees to point straight up
+        let angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI) + 90;
+
+        // map purely into [-180, 180] constraint space
+        if (angle > 180) angle -= 360;
+
+        const clampedAngle = Math.max(DIAL_MIN_DEG, Math.min(DIAL_MAX_DEG, angle));
+        degRef.current = clampedAngle;
+        setVolume(degToVol(clampedAngle));
     }, [setVolume]);
 
     const onPointerUp = useCallback(() => {

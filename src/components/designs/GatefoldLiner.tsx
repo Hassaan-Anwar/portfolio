@@ -33,29 +33,9 @@ function PressKitProfile({ item }: { item: any }) {
                 border: '1px solid rgba(0,0,0,0.1)',
                 padding: '32px 36px 20px',
                 fontFamily: "'IBM Plex Mono', monospace",
-                overflow: 'hidden',
+                overflowY: 'auto',
             }}
         >
-            {/* ── MANIFESTO TAGLINE ─────────────────────────────────────── */}
-            <div style={{ marginBottom: '12px' }}>
-                <p
-                    className="font-mono uppercase"
-                    style={{
-                        fontSize: '20px',
-                        fontWeight: 800,
-                        lineHeight: 1.15,
-                        letterSpacing: '-0.01em',
-                        color: '#1a1c1d',
-                        maxWidth: '70%',
-                    }}
-                >
-                    ORCHESTRATING SCALABLE AI SOLUTIONS
-                    <br />AND FULL-STACK ARCHITECTURES.
-                    <br />FROM CONCEPT
-                    <br />TO DEPLOYMENT.
-                </p>
-            </div>
-
             {/* ── CATALOG BADGE ─────────────────────────────────────────── */}
             <div style={{ marginBottom: '4px' }}>
                 <span
@@ -91,13 +71,10 @@ function PressKitProfile({ item }: { item: any }) {
                     display: 'grid',
                     gridTemplateColumns: '2fr 1fr',
                     gap: '20px',
-                    flex: 1,
-                    minHeight: 0,
-                    overflow: 'hidden',
                 }}
             >
                 {/* LEFT: Bio + Tiny Hint */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
                     {/* HEADLINE label */}
                     <div>
@@ -153,7 +130,7 @@ function PressKitProfile({ item }: { item: any }) {
                     {/* SESSION CREDITS */}
                     <div>
                         <p className="font-mono" style={{ fontSize: '9px', letterSpacing: '3px', color: '#888', textTransform: 'uppercase', marginBottom: '6px' }}>SESSION CREDITS</p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
                             {[
                                 ['PRIMARY ENGINEER', 'Python (Core)'],
                                 ['BACKEND SERVICES', 'FastAPI, REST APIs'],

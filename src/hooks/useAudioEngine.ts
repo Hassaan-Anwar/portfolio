@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { useMusicStore } from '@/store/musicStore';
 
 // ─── Audio file paths ────────────────────────────────────────────────────────
-const INTRO = '/audio/intro.mp3';
 
 // Map every section+index combination to a unique audio file.
 const AUDIO_MAP: Record<string, string> = {
@@ -68,7 +67,6 @@ export function useAudioEngine() {
 
     // Refs — survive re-renders without causing them
     const mainSrcRef = useRef<HTMLAudioElement | null>(null);
-    const introSrcRef = useRef<HTMLAudioElement | null>(null);
     const prevKeyRef = useRef<string>('');
     const prevPlayRef = useRef<boolean>(isPlaying);
     const isSwitchingRef = useRef<boolean>(false);
@@ -78,7 +76,6 @@ export function useAudioEngine() {
     useEffect(() => {
         volumeRef.current = volume;
         if (mainSrcRef.current) mainSrcRef.current.volume = volume;
-        if (introSrcRef.current) introSrcRef.current.volume = volume;
     }, [volume]);
 
     // ── Track / play state changes ────────────────────────────────────────────
@@ -132,49 +129,17 @@ export function useAudioEngine() {
                 return;
             }
 
-            // 2. Play intro hiss
-            const introEl = new Audio(audioPath.startsWith('/audio/') ? INTRO : '');
-            if (introEl.src) { // In case audioPath is valid
-                introEl.preload = 'auto';
-                introEl.volume = 0;
-                introSrcRef.current = introEl;
-
-                await introEl.play().catch(() => { });
-                await fadeAudio(introEl, 0, volumeRef.current, 200);
-            }
-
-            // 3. Prepare main track (load + start silent)
+            // 2. Prepare main track (load + start silent)
             const mainEl = new Audio(audioPath);
             mainEl.preload = 'auto';
             mainEl.loop = true;
             mainEl.volume = 0;
             mainSrcRef.current = mainEl;
 
-            // Wait for intro to nearly finish, then fade in main
-            const introDuration = introEl.duration || 2;
-            const fadeInDelay = Math.max(0, (introDuration - 0.5) * 1000);
-
-            await new Promise<void>(res => setTimeout(res, fadeInDelay));
-
-            // Stop if isPlaying magically turned false while waiting
-            if (!useMusicStore.getState().isPlaying && prevKeyRef.current === itemKey) {
-                isSwitchingRef.current = false;
-                return;
-            }
-
-            // 4. Start main track & cross-fade
+            // 3. Start main track & cross-fade
             await mainEl.play().catch(() => { });
+            await fadeAudio(mainEl, 0, volumeRef.current, 600);
 
-            const tasks: Promise<void>[] = [];
-            if (introSrcRef.current) {
-                tasks.push(fadeAudio(introSrcRef.current, introSrcRef.current.volume, 0, 400).then(() => {
-                    introEl.pause();
-                    introEl.src = '';
-                }));
-            }
-            tasks.push(fadeAudio(mainEl, 0, volumeRef.current, 600));
-
-            await Promise.all(tasks);
             isSwitchingRef.current = false;
         };
 
@@ -190,7 +155,6 @@ export function useAudioEngine() {
     useEffect(() => {
         return () => {
             mainSrcRef.current?.pause();
-            introSrcRef.current?.pause();
         };
     }, []);
 }

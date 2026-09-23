@@ -54,11 +54,12 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
 
     return (
         <article
-            className="w-full h-full relative flex flex-col rounded-xl overflow-hidden"
+            className="w-full h-full relative flex flex-col rounded-xl overflow-y-auto overflow-x-hidden"
             style={{
                 fontFamily: '"JetBrains Mono", monospace',
                 background: 'linear-gradient(160deg, #1c1c1f 0%, #141416 100%)',
                 border: '1px solid rgba(255,255,255,0.07)',
+                scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.07) transparent',
                 boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
             }}
         >
@@ -94,8 +95,8 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
 
             {/* ── MAIN BODY: CRT monitor floated left, logs wrap around it ── */}
             <div
-                className="flex-1 min-h-0 overflow-y-auto px-6 py-4"
-                style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.07) transparent', paddingRight: '32px' }}
+                className="px-6 py-4"
+                style={{ paddingRight: '32px' }}
             >
                 {/* CRT monitor — floated left so log text wraps around it */}
                 <div className="flex flex-col gap-2" style={{ float: 'left', width: '280px', marginRight: '24px', marginBottom: '12px' }}>

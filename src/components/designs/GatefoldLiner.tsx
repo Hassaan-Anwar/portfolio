@@ -281,6 +281,7 @@ function StandardGatefold({ item, isProject }: { item: any; isProject: boolean }
                 boxShadow: '0 24px 60px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,1)',
                 border: '1px solid rgba(0,0,0,0.1)',
                 padding: '40px',
+                overflowY: 'auto',
             }}
         >
             <div className="mb-6">
@@ -306,7 +307,7 @@ function StandardGatefold({ item, isProject }: { item: any; isProject: boolean }
 
             <hr className="w-full border-t border-[rgba(0,0,0,0.8)] opacity-20 mb-6" />
 
-            <div className="flex-1 w-full flex flex-col h-full overflow-y-auto pr-4" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.2) transparent' }}>
+            <div className="w-full flex flex-col pr-4">
                 <div className="flex flex-col gap-5 font-sans leading-relaxed pb-4" style={{ fontSize: '16px', color: '#2a2a2b', fontWeight: 500, lineHeight: 1.6 }}>
                     {paragraphs.map((p, idx) => (
                         <p key={idx}>{parseHighlights(p)}</p>

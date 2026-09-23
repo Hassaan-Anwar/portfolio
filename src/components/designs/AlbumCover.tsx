@@ -112,7 +112,7 @@ export default function AlbumCover({ item }: InfoPanelProps) {
     const liveHref = liveUrl && liveUrl !== '#' ? liveUrl : undefined;
 
     return (
-        <div className="w-full h-full flex overflow-hidden" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
+        <div className="w-full h-full flex overflow-y-auto overflow-x-hidden" style={{ fontFamily: '"JetBrains Mono", monospace', scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
 
             {/* ── LEFT SLEEVE PANEL ──────────────────── */}
             <div

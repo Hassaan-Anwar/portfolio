@@ -422,7 +422,7 @@ export default function PixelRoom() {
                         onPlay: () => playThenClose(() => useMusicStore.getState().setCurrentAbout(0)),
                         content: (
                             <VinylRecord
-                                color={ABOUT[0].color} accentGlow={ABOUT[0].accentGlow} shortTitle={ABOUT[0].shortTitle} coverFont={ABOUT[0].coverFont} label={ABOUT[0].vinylLabel} title={ABOUT[0].title}
+                                color={ABOUT[0].color} accentGlow={ABOUT[0].accentGlow} shortTitle={ABOUT[0].shortTitle} coverFont={ABOUT[0].coverFont} label={ABOUT[0].vinylLabel} title={ABOUT[0].title} tooltipText='Introduction'
                                 isActive={activeSection === 'about'} isPlaying={activeSection === 'about' && isPlaying}
                             />
                         )
@@ -436,7 +436,7 @@ export default function PixelRoom() {
                     onPlay: () => playThenClose(() => useMusicStore.getState().setCurrentBestsellers(i)),
                     content: (
                         <VinylRecord
-                            color={feat.color} accentGlow={feat.accentGlow} shortTitle={feat.shortTitle} coverFont={feat.coverFont} label={feat.vinylLabel} title={feat.title}
+                            color={feat.color} accentGlow={feat.accentGlow} shortTitle={feat.shortTitle} coverFont={feat.coverFont} label={feat.vinylLabel} title={feat.title} tooltipText={feat.title}
                             isActive={activeSection === 'bestsellers' && currentBestsellersIndex === i}
                             isPlaying={activeSection === 'bestsellers' && currentBestsellersIndex === i && isPlaying}
                         />
@@ -452,7 +452,7 @@ export default function PixelRoom() {
                         onPlay: () => playThenClose(() => useMusicStore.getState().setCurrentExperience(i)),
                         content: (
                             <VinylRecord
-                                color="#2DD4BF" accentGlow="rgba(45,212,191,0.6)" shortTitle={exp.shortTitle} coverFont={exp.coverFont} label={exp.vinylLabel} title={exp.company}
+                                color="#2DD4BF" accentGlow="rgba(45,212,191,0.6)" shortTitle={exp.shortTitle} coverFont={exp.coverFont} label={exp.vinylLabel} title={exp.company} tooltipText={i === 0 ? 'AI SWE at genesys' : 'Data engineer jazz'}
                                 isActive={isActive} isPlaying={isActive && isPlaying}
                             />
                         )
@@ -468,7 +468,7 @@ export default function PixelRoom() {
                         onPlay: () => playThenClose(() => useMusicStore.getState().setCurrentProject(i)),
                         content: (
                             <VinylRecord
-                                color={proj.color} accentGlow={proj.accentGlow} shortTitle={proj.shortTitle} coverFont={proj.coverFont} label={proj.vinylLabel} title={proj.title}
+                                color={proj.color} accentGlow={proj.accentGlow} shortTitle={proj.shortTitle} coverFont={proj.coverFont} label={proj.vinylLabel} title={proj.title} tooltipText={proj.title}
                                 isActive={isActive} isPlaying={isActive && isPlaying}
                             />
                         )

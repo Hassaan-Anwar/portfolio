@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useMusicStore } from '@/store/musicStore';
 
 // Multi-stop radial gradient that simulates vinyl grooves (lands & grooves alternating)
@@ -27,10 +27,11 @@ interface Props {
     title: string;
     isActive: boolean;
     isPlaying: boolean;
+    tooltipText?: string;
 }
 
 export default function VinylRecord({
-    color, accentGlow, shortTitle, coverFont, label, title, isActive, isPlaying,
+    color, accentGlow, shortTitle, coverFont, label, title, isActive, isPlaying, tooltipText
 }: Props) {
     const [isHovered, setIsHovered] = useState(false);
     const [isPressed, setIsPressed] = useState(false);
@@ -186,6 +187,34 @@ export default function VinylRecord({
                     }}
                 />
             </motion.div>
+
+            {/* Hover Tooltip Pop-Up */}
+            <AnimatePresence>
+                {(isHovered || isPressed) && !isDragging && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 5, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute z-50 pointer-events-none font-pixel uppercase tracking-widest text-center"
+                        style={{
+                            bottom: '110%',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            background: 'rgba(10, 10, 15, 0.95)',
+                            border: `1px solid ${color}`,
+                            color: '#ececec',
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            fontSize: '6px',
+                            boxShadow: `0 8px 16px rgba(0,0,0,0.8), 0 0 12px ${accentGlow}`,
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {tooltipText || title}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 }

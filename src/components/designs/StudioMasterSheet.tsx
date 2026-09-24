@@ -111,9 +111,8 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                         }}>
                         {/* Screen */}
                         <div className="relative w-full rounded-md overflow-hidden" style={{ paddingBottom: '75%', background: '#000' }}>
-                            {/* Glow content / Image */}
                             {item.imageSrc ? (
-                                <div className="absolute inset-0 flex items-center justify-center">
+                                <>
                                     <Image
                                         src={item.imageSrc}
                                         alt={item.shortTitle}
@@ -123,8 +122,8 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                                         style={{ filter: 'brightness(0.8) contrast(1.1)' }}
                                     />
                                     {/* Subdued radial shadow around edges to retain CRT feel */}
-                                    <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 28px rgba(0,0,0,0.85)' }} />
-                                </div>
+                                    <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: 'inset 0 0 28px rgba(0,0,0,0.85)', zIndex: 10 }} />
+                                </>
                             ) : (
                                 <div className="absolute inset-0 flex items-center justify-center"
                                     style={{ background: `radial-gradient(ellipse at center, ${color}3a 0%, #000 72%)` }}>

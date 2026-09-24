@@ -5,7 +5,7 @@ import { useMusicStore } from '@/store/musicStore';
 import { Howl } from 'howler';
 
 // ─── Audio file paths ────────────────────────────────────────────────────────
-const AUDIO_MAP: Record<string, string> = {
+export const AUDIO_MAP: Record<string, string> = {
     'about:0': '/audio/Sufjan Stevens - Mystery of Love (Official Instrumental).mp3',
     'bestsellers:0': '/audio/Frank Ocean - Nights (Instrumental).mp3',
     'bestsellers:1': '/audio/Radiohead - Weird Fishes Arpeggi (Instrumental Original).mp3',
@@ -104,7 +104,7 @@ export function useAudioEngine() {
             // 2. Load new Howl instance (Lazy Instantiation)
             const mainHowl = new Howl({
                 src: [audioPath],
-                html5: true,          // CRITICAL: Streams the MP3 to bypass 50MB RAM crashes
+                html5: false,         // PRELOADED INTO RAM FOR INSTANT PLAYBACK
                 preload: 'metadata',  // Fetches header for instant preparation
                 loop: true,
                 volume: 0,            // Start at 0 for latency-mask fading

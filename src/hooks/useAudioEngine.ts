@@ -110,7 +110,7 @@ export function useAudioEngine() {
 
         const audioPath = AUDIO_MAP[itemKey];
         if (!audioPath) {
-            isSwitchingRef.current = false;
+            
             return;
         }
 
@@ -125,7 +125,7 @@ export function useAudioEngine() {
             }
 
             if (!isPlaying) {
-                isSwitchingRef.current = false;
+                
                 return;
             }
 
@@ -137,6 +137,7 @@ export function useAudioEngine() {
             mainSrcRef.current = mainEl;
 
             // 3. Start main track & cross-fade with Autoplay fallback
+            isSwitchingRef.current = false;
             try {
                 await mainEl.play();
                 await fadeAudio(mainEl, 0, volumeRef.current, 600);
@@ -157,12 +158,12 @@ export function useAudioEngine() {
                 window.addEventListener('keydown', playOnInteract);
             }
 
-            isSwitchingRef.current = false;
+            
         };
 
         // Delay slight amount to let Safari/Chrome register any DOM gestures
         setTimeout(() => {
-            switchTrack().catch(() => { isSwitchingRef.current = false; });
+            switchTrack().catch(() => {  });
         }, 10);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

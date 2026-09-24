@@ -145,7 +145,7 @@ export const FEATURED: SupplementalInfoItem[] = [
     shortTitle: 'MOP', coverFont: 'font-album-5', vinylLabel: 'MLO',
     infoDesign: 'studio-master-sheet', catalogId: 'FT-02', infoCategory: 'FEATURED RELEASE', formatLabel: 'INFRASTRUCTURE',
     imageCaption: 'PROD CLUSTER: AUTO-SCALING PIPELINES',
-    imageSrc: '/e-commerce-ad.jpg',
+    imageSrc: '/e-commerce.jpg',
     credits: { engineering: ['Kubernetes', 'Azure'], orchestration: ['Airflow', 'MLflow'], masteredAt: 'DEV.LAIR ARCHIVE' },
     githubUrl: 'https://github.com/Hassaan-Anwar/e-commerce-ad-generator',
   }

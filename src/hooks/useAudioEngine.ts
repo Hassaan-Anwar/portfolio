@@ -14,7 +14,7 @@ export const AUDIO_MAP: Record<string, string> = {
     'projects:0': '/audio/Travis Scott - 90210 (Official Instrumental).mp3',
     'projects:1': '/audio/Metro Boomin, Future - We Still Don\'t Trust You (INSTRUMENTAL).mp3',
     'projects:2': '/audio/Future - Solo (Official Instrumental).mp3',
-    'projects:3': '/audio/Nahin Milta Original Karaoke Bayaan HD #bayaan #karaokewithlyrics.mp3',
+    'projects:3': '/audio/nahin_milta.mp3',
     'projects:4': '/audio/Joji - SLOW DANCING IN THE DARK (Instrumental).mp3',
 };
 

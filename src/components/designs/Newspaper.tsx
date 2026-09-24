@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import type { InfoItem } from '@/data/info';
 import { Fragment } from 'react';
 
@@ -107,10 +108,12 @@ export default function Newspaper({ item }: InfoPanelProps) {
                         }}
                     >
                         {item.imageSrc ? (
-                            <img
+                            <Image
                                 src={item.imageSrc}
                                 alt={item.shortTitle}
-                                className="w-full h-full object-cover"
+                                fill
+                                priority
+                                className="object-cover"
                                 style={{ filter: 'grayscale(100%) contrast(1.2) brightness(0.9)' }}
                             />
                         ) : (

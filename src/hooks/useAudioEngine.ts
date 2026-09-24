@@ -2,10 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 import { useMusicStore } from '@/store/musicStore';
+import { Howl } from 'howler';
 
 // ─── Audio file paths ────────────────────────────────────────────────────────
-
-// Map every section+index combination to a unique audio file.
 const AUDIO_MAP: Record<string, string> = {
     'about:0': '/audio/Sufjan Stevens - Mystery of Love (Official Instrumental).mp3',
     'bestsellers:0': '/audio/Frank Ocean - Nights (Instrumental).mp3',
@@ -18,32 +17,6 @@ const AUDIO_MAP: Record<string, string> = {
     'projects:3': '/audio/Nahin Milta Original Karaoke Bayaan HD #bayaan #karaokewithlyrics.mp3',
     'projects:4': '/audio/Joji - SLOW DANCING IN THE DARK (Instrumental).mp3',
 };
-
-// ─── Fade utilities (Raw HTML5 Audio) ─────────────────────────────────────────
-function fadeAudio(
-    audio: HTMLAudioElement,
-    fromVal: number,
-    toVal: number,
-    durationMs: number
-): Promise<void> {
-    return new Promise((resolve) => {
-        const start = performance.now();
-
-        function step(now: number) {
-            const elapsed = now - start;
-            const progress = Math.min(elapsed / durationMs, 1);
-            audio.volume = Math.max(0, Math.min(1, fromVal + progress * (toVal - fromVal)));
-
-            if (progress < 1) {
-                requestAnimationFrame(step);
-            } else {
-                resolve();
-            }
-        }
-
-        requestAnimationFrame(step);
-    });
-}
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 export function useAudioEngine() {
@@ -65,20 +38,20 @@ export function useAudioEngine() {
                     currentExperienceIndex;
     const itemKey = `${activeSection}:${currentIndex}`;
 
-    // Refs — survive re-renders without causing them
-    const mainSrcRef = useRef<HTMLAudioElement | null>(null);
+    const mainHowlRef = useRef<Howl | null>(null);
     const prevKeyRef = useRef<string>('');
     const prevPlayRef = useRef<boolean>(isPlaying);
     const isSwitchingRef = useRef<boolean>(false);
     const volumeRef = useRef<number>(volume);
 
-    // Keep volumeRef in sync and apply instantly to active audios
+    // Keep global volume in sync
     useEffect(() => {
         volumeRef.current = volume;
-        if (mainSrcRef.current) mainSrcRef.current.volume = volume;
+        if (mainHowlRef.current) {
+            mainHowlRef.current.volume(volume);
+        }
     }, [volume]);
 
-    // ── Track / play state changes ────────────────────────────────────────────
     useEffect(() => {
         const keyChanged = itemKey !== prevKeyRef.current;
         const playChanged = isPlaying !== prevPlayRef.current;
@@ -88,15 +61,15 @@ export function useAudioEngine() {
         // ── PAUSE / RESUME (no track switch) ─────────────────────────────────
         if (!keyChanged && playChanged) {
             prevPlayRef.current = isPlaying;
-            if (!mainSrcRef.current) return;
+            if (!mainHowlRef.current) return;
 
             if (isPlaying) {
-                // If it was paused mid-intro, we just resume main for safety
-                mainSrcRef.current.play().catch(() => { });
-                fadeAudio(mainSrcRef.current, 0, volumeRef.current, 200).catch(() => { });
+                mainHowlRef.current.play();
+                mainHowlRef.current.fade(0, volumeRef.current, 200);
             } else {
-                const el = mainSrcRef.current;
-                fadeAudio(el, el.volume, 0, 200).then(() => el.pause()).catch(() => { });
+                const howl = mainHowlRef.current;
+                howl.fade(volumeRef.current, 0, 200);
+                setTimeout(() => howl.pause(), 200);
             }
             return;
         }
@@ -110,61 +83,64 @@ export function useAudioEngine() {
 
         const audioPath = AUDIO_MAP[itemKey];
         if (!audioPath) {
-            
+            isSwitchingRef.current = false;
             return;
         }
 
-        const switchTrack = async () => {
-            // 1. Fade out current main track (if playing)
-            if (mainSrcRef.current) {
-                const el = mainSrcRef.current;
-                await fadeAudio(el, el.volume, 0, 250);
-                el.pause();
-                el.src = '';
-                mainSrcRef.current = null;
+        const switchTrack = () => {
+            // 1. Fade out current main track if playing
+            if (mainHowlRef.current) {
+                const oldHowl = mainHowlRef.current;
+                oldHowl.fade(volumeRef.current, 0, 250);
+                setTimeout(() => {
+                    oldHowl.stop();
+                    oldHowl.unload(); // Destroy from memory
+                }, 250);
+                mainHowlRef.current = null;
             }
 
             if (!isPlaying) {
-                
+                isSwitchingRef.current = false;
                 return;
             }
 
-            // 2. Prepare main track (load + start silent)
-            const mainEl = new Audio(audioPath);
-            mainEl.preload = 'auto';
-            mainEl.loop = true;
-            mainEl.volume = 0;
-            mainSrcRef.current = mainEl;
+            // 2. Load new Howl instance (Lazy Instantiation)
+            const mainHowl = new Howl({
+                src: [audioPath],
+                html5: true,          // CRITICAL: Streams the MP3 to bypass 50MB RAM crashes
+                preload: 'metadata',  // Fetches header for instant preparation
+                loop: true,
+                volume: 0,            // Start at 0 for latency-mask fading
+            });
 
-            // 3. Start main track & cross-fade with Autoplay fallback
+            mainHowlRef.current = mainHowl;
+
+            // Release lock instantly so users can rapidly spam-click records without buffering lag
             isSwitchingRef.current = false;
-            try {
-                await mainEl.play();
-                await fadeAudio(mainEl, 0, volumeRef.current, 600);
-            } catch (err) {
-                // Browser Autoplay Policy blocked the initial playback.
-                // Will securely retry as soon as the user touches/clicks the screen.
+
+            // 3. Play with AutoPlay fallback resilience
+            mainHowl.play();
+
+            // Howler triggers 'playerror' natively instead of promise rejection if Chrome/Safari block it
+            mainHowl.once('playerror', () => {
                 const playOnInteract = () => {
-                    if (useMusicStore.getState().isPlaying && mainSrcRef.current === mainEl) {
-                        mainEl.play().catch(() => { });
-                        fadeAudio(mainEl, 0, volumeRef.current, 600).catch(() => { });
+                    if (useMusicStore.getState().isPlaying && mainHowlRef.current === mainHowl) {
+                        mainHowl.play();
+                        mainHowl.fade(0, volumeRef.current, 800);
                     }
-                    window.removeEventListener('click', playOnInteract);
-                    window.removeEventListener('touchstart', playOnInteract);
+                    window.removeEventListener('pointerdown', playOnInteract);
                     window.removeEventListener('keydown', playOnInteract);
                 };
-                window.addEventListener('click', playOnInteract);
-                window.addEventListener('touchstart', playOnInteract);
+                window.addEventListener('pointerdown', playOnInteract);
                 window.addEventListener('keydown', playOnInteract);
-            }
+            });
 
-            
+            // 4. Fade mask (swells to full volume over 800ms)
+            mainHowl.fade(0, volumeRef.current, 800);
         };
 
-        // Delay slight amount to let Safari/Chrome register any DOM gestures
-        setTimeout(() => {
-            switchTrack().catch(() => {  });
-        }, 10);
+        // Standard event loop push
+        setTimeout(() => switchTrack(), 10);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [itemKey, isPlaying]);
@@ -172,7 +148,9 @@ export function useAudioEngine() {
     // ── Cleanup on unmount ────────────────────────────────────────────────────
     useEffect(() => {
         return () => {
-            mainSrcRef.current?.pause();
+            if (mainHowlRef.current) {
+                mainHowlRef.current.unload();
+            }
         };
     }, []);
 }

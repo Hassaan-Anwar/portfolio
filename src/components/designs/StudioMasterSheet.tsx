@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import type { InfoItem } from '@/data/info';
 
 interface InfoPanelProps {
@@ -113,10 +114,12 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                             {/* Glow content / Image */}
                             {item.imageSrc ? (
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <img
+                                    <Image
                                         src={item.imageSrc}
                                         alt={item.shortTitle}
-                                        className="w-full h-full object-cover"
+                                        fill
+                                        priority
+                                        className="object-cover"
                                         style={{ filter: 'brightness(0.8) contrast(1.1)' }}
                                     />
                                     {/* Subdued radial shadow around edges to retain CRT feel */}

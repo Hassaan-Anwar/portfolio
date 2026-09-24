@@ -9,12 +9,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Dev.lair — Portfolio',
+  title: 'Portfolio',
   description:
     'A cozy music lair portfolio — explore projects like vinyl records in a neon-lit pixel art studio.',
   keywords: ['portfolio', 'developer', 'creative', 'pixel art', 'vaporwave'],
   openGraph: {
-    title: 'Dev.lair — Portfolio',
+    title: 'Portfolio',
     description: 'A cozy music lair portfolio experience.',
     type: 'website',
   },

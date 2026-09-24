@@ -136,9 +136,26 @@ export function useAudioEngine() {
             mainEl.volume = 0;
             mainSrcRef.current = mainEl;
 
-            // 3. Start main track & cross-fade
-            await mainEl.play().catch(() => { });
-            await fadeAudio(mainEl, 0, volumeRef.current, 600);
+            // 3. Start main track & cross-fade with Autoplay fallback
+            try {
+                await mainEl.play();
+                await fadeAudio(mainEl, 0, volumeRef.current, 600);
+            } catch (err) {
+                // Browser Autoplay Policy blocked the initial playback.
+                // Will securely retry as soon as the user touches/clicks the screen.
+                const playOnInteract = () => {
+                    if (useMusicStore.getState().isPlaying && mainSrcRef.current === mainEl) {
+                        mainEl.play().catch(() => { });
+                        fadeAudio(mainEl, 0, volumeRef.current, 600).catch(() => { });
+                    }
+                    window.removeEventListener('click', playOnInteract);
+                    window.removeEventListener('touchstart', playOnInteract);
+                    window.removeEventListener('keydown', playOnInteract);
+                };
+                window.addEventListener('click', playOnInteract);
+                window.addEventListener('touchstart', playOnInteract);
+                window.addEventListener('keydown', playOnInteract);
+            }
 
             isSwitchingRef.current = false;
         };

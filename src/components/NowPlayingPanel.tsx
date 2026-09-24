@@ -103,7 +103,7 @@ function VolumeDial({ volume, setVolume, color, accentGlow }: VolumeDial) {
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: '4px',
-                userSelect: 'none',
+                userSelect: 'none', touchAction: 'none',
             }}
         >
             {/* Dial ring */}
@@ -116,7 +116,7 @@ function VolumeDial({ volume, setVolume, color, accentGlow }: VolumeDial) {
                     background: 'linear-gradient(145deg, #3a3540, #1a1521)',
                     border: `1px solid #4a4258`,
                     boxShadow: `0 4px 16px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.08), 0 0 12px ${accentGlow}33`,
-                    cursor: 'ns-resize',
+                    cursor: 'ns-resize', touchAction: 'none',
                 }}
                 ref={dialRef}
                 onPointerDown={onPointerDown}

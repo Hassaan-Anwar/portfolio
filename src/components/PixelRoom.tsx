@@ -363,7 +363,7 @@ function MobileLibrary({
                                 <span className="font-pixel" style={{ fontSize: '9px', letterSpacing: '3px', color: accentColor }}>
                                     RECORD LIBRARY
                                 </span>
-                                <span className="font-pixel" style={{ fontSize: '6px', letterSpacing: '1px', color: '#9b93ae' }}>
+                                <span className="font-pixel" style={{ fontSize: '7px', letterSpacing: '1.5px', color: '#f59e0b', fontWeight: 'bold', textShadow: '0 2px 10px rgba(245, 158, 11, 0.4)' }}>
                                     SWIPE RIGHT TO PLAY · SWIPE LEFT TO SIFT
                                 </span>
                             </div>

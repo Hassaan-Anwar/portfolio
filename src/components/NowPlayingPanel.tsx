@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import { useMusicStore } from '@/store/musicStore';
 import { getActiveInfoItem } from '@/data/info';
 import InfoPanel from '@/components/InfoPanel';
@@ -490,7 +491,16 @@ export default function NowPlayingPanel() {
                             <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
                             <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
                         </div>
-                        <img src="/pixel_cat.gif" alt="Pixel Cat" style={{ width: '48px', height: '48px', opacity: 0.9, imageRendering: 'pixelated' }} />
+                        <div style={{ position: 'relative', width: '48px', height: '48px', opacity: 0.9 }}>
+                            <Image
+                                src="/pixel_cat.gif"
+                                alt="Pixel Cat"
+                                fill
+                                unoptimized
+                                priority
+                                style={{ imageRendering: 'pixelated', objectFit: 'contain' }}
+                            />
+                        </div>
                     </div>
 
                     {/* ── Volume Dial (Right Base) ── */}

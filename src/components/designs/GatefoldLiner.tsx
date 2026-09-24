@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 // ─── Helper: Markdown bold parser ────────────────────────────────────────────
 function parseHighlights(text: string) {
@@ -115,16 +116,16 @@ function PressKitProfile({ item }: { item: any }) {
                             width: '90%',
                         }}
                     >
-                        <img
-                            src="/profile-modified.jpg"
-                            alt="Hassaan Anwar"
-                            style={{
-                                width: '100%',
-                                aspectRatio: '1 / 1',
-                                objectFit: 'cover',
-                                filter: 'grayscale(100%) contrast(1.1) brightness(0.95)',
-                            }}
-                        />
+                        <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
+                            <Image
+                                src="/profile-modified.jpg"
+                                alt="Hassaan Anwar"
+                                fill
+                                priority
+                                className="object-cover"
+                                style={{ filter: 'grayscale(100%) contrast(1.1) brightness(0.95)' }}
+                            />
+                        </div>
                         <p
                             className="font-mono"
                             style={{ fontSize: '8px', textAlign: 'center', color: '#888', marginTop: '6px', fontStyle: 'italic' }}

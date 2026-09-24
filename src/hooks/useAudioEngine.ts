@@ -91,11 +91,8 @@ export function useAudioEngine() {
             // 1. Fade out current main track if playing
             if (mainHowlRef.current) {
                 const oldHowl = mainHowlRef.current;
-                oldHowl.fade(volumeRef.current, 0, 250);
-                setTimeout(() => {
-                    oldHowl.stop();
-                    oldHowl.unload(); // Destroy from memory
-                }, 250);
+                oldHowl.pause();
+                oldHowl.unload(); // Synchronously destroy from memory to prevent HTML5 Audio limit crash
                 mainHowlRef.current = null;
             }
 

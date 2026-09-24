@@ -110,7 +110,7 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                             boxShadow: '0 8px 24px rgba(0,0,0,0.9), inset 0 1px rgba(255,255,255,0.06)',
                         }}>
                         {/* Screen */}
-                        <div className="relative w-full rounded-md overflow-hidden" style={{ paddingBottom: '75%', background: '#000' }}>
+                        <div className="relative w-full rounded-md overflow-hidden" style={{ aspectRatio: '4/3', background: '#000' }}>
                             {item.imageSrc ? (
                                 <>
                                     <Image
@@ -118,6 +118,7 @@ export default function StudioMasterSheet({ item }: InfoPanelProps) {
                                         alt={item.shortTitle}
                                         fill
                                         priority
+                                        sizes="(max-width: 768px) 100vw, 400px"
                                         className="object-cover"
                                         style={{ filter: 'brightness(0.8) contrast(1.1)' }}
                                     />

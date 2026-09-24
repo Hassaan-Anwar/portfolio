@@ -113,6 +113,7 @@ export default function Newspaper({ item }: InfoPanelProps) {
                                 alt={item.shortTitle}
                                 fill
                                 priority
+                                sizes="(max-width: 768px) 100vw, 400px"
                                 className="object-cover"
                                 style={{ filter: 'grayscale(100%) contrast(1.2) brightness(0.9)' }}
                             />

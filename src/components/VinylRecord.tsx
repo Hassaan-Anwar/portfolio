@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useMusicStore } from '@/store/musicStore';
 
 // Multi-stop radial gradient that simulates vinyl grooves (lands & grooves alternating)
 const DISC_BG = `radial-gradient(circle,
@@ -41,8 +42,18 @@ export default function VinylRecord({
     // Sift interactions limit the slide-out visually to indicate interactivity
     const HOVER_SLIDE = 16;
 
+    const isDragging = useMusicStore(s => s.isDragging);
+
+    // Force clear sticky hover states on mobile when dragging starts
+    useEffect(() => {
+        if (isDragging) {
+            setIsHovered(false);
+            setIsPressed(false);
+        }
+    }, [isDragging]);
+
     // Calculate dynamic state
-    const currentSlide = isHovered && !isPressed ? HOVER_SLIDE : 0;
+    const currentSlide = (isHovered && !isPressed && !isDragging) ? HOVER_SLIDE : 0;
 
     return (
         <motion.div
@@ -117,7 +128,7 @@ export default function VinylRecord({
                         zIndex: 2
                     }}
                 >
-                    
+
                 </div>
 
                 {/* Spindle Hole */}

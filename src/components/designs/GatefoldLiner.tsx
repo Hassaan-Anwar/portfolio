@@ -122,6 +122,7 @@ function PressKitProfile({ item }: { item: any }) {
                                 alt="Hassaan Anwar"
                                 fill
                                 priority
+                                sizes="(max-width: 768px) 100vw, 400px"
                                 className="object-cover"
                                 style={{ filter: 'grayscale(100%) contrast(1.1) brightness(0.95)' }}
                             />

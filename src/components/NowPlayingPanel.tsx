@@ -176,7 +176,7 @@ function VolumeDial({ volume, setVolume, color, accentGlow }: VolumeDial) {
                 className="font-pixel"
                 style={{ fontSize: '6px', color: '#9b93ae', letterSpacing: '2px' }}
             >
-                GAIN
+                VOL
             </span>
 
             {/* Volume % readout */}
@@ -484,23 +484,23 @@ export default function NowPlayingPanel() {
                         </div>
                     </motion.div>
 
-                    {/* Pixel Cat Sticker */}
-                    <img src="/pixel_cat.gif" alt="Pixel Cat" style={{ position: 'absolute', bottom: '12px', right: '24px', width: '48px', height: '48px', opacity: 0.9, zIndex: 10, imageRendering: 'pixelated' }} />
+                    {/* ── Left Decorations (Lights + Pixel Cat) ── */}
+                    <div style={{ position: 'absolute', bottom: '16px', left: '32px', display: 'flex', alignItems: 'center', gap: '20px', zIndex: 20 }}>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
+                            <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
+                        </div>
+                        <img src="/pixel_cat.gif" alt="Pixel Cat" style={{ width: '48px', height: '48px', opacity: 0.9, imageRendering: 'pixelated' }} />
+                    </div>
 
-                    {/* ── Base Controls (Original Circles + Volume Dial) ── */}
-                    <div style={{ position: 'absolute', bottom: '16px', left: '32px', display: 'flex', alignItems: 'flex-end', gap: '20px', zIndex: 20 }}>
-                        <div style={{ display: 'flex', gap: '12px', paddingBottom: '20px' }}>
-                            <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
-                            <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'radial-gradient(circle, #666, #111)', boxShadow: '0 2px 6px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.3)' }} />
-                        </div>
-                        <div style={{ transform: 'scale(0.85)', transformOrigin: 'bottom left' }}>
-                            <VolumeDial
-                                volume={volume}
-                                setVolume={setVolume}
-                                color={color}
-                                accentGlow={accentGlow}
-                            />
-                        </div>
+                    {/* ── Volume Dial (Right Base) ── */}
+                    <div style={{ position: 'absolute', bottom: '20px', right: '32px', transform: 'scale(1.15)', transformOrigin: 'bottom right', zIndex: 20 }}>
+                        <VolumeDial
+                            volume={volume}
+                            setVolume={setVolume}
+                            color={color}
+                            accentGlow={accentGlow}
+                        />
                     </div>
                 </div>
 

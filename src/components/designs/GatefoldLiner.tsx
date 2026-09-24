@@ -93,6 +93,11 @@ function PressKitProfile({ item }: { item: any }) {
                         <p>
                             This portfolio is built as an interactive record collection. Flip through the crates, then play a disc on the turntable to read its liner notes.
                         </p>
+                        <p style={{ fontWeight: 'bold' }}>
+                            <a href="/resume.pdf" download="Resume_Hassaan_Anwar.pdf" style={{ textDecoration: 'underline', color: 'inherit', cursor: 'pointer' }}>
+                                Download my resume
+                            </a>
+                        </p>
                     </div>
                 </div>
 
